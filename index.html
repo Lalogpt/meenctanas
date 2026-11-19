@@ -4,18 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Snoopy · Libro para Vany</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; margin: 0; }
   body {
-    background: radial-gradient(circle at 50% 30%, #3b3b47, #1c1c24);
-    color: #e5e7eb;
+    background:
+      radial-gradient(circle at 50% 25%, #3d2b24 0%, #241916 55%, #140e0d 100%);
+    color: #f3f4f6;
     font-family: 'Inter', system-ui, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+    padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
     overflow: hidden;
     user-select: none;
   }
@@ -25,72 +26,92 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    width: min(94vw, 600px);
-    background: #ffffff10;
-    border: 1px solid #ffffff1c;
+    gap: 8px;
+    width: min(95vw, 660px);
+    background: rgba(28, 19, 17, 0.78);
+    border: 1px solid rgba(252, 211, 77, 0.25);
     border-radius: 999px;
     padding: 5px 8px;
-    margin-bottom: 6px;
-    backdrop-filter: blur(8px);
+    margin-bottom: 5px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    z-index: 10;
+  }
+  .nav-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
   }
   .nav-btn {
     font: inherit;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    background: #ffffff1a;
-    border: 1px solid #ffffff24;
-    color: #f3f4f6;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(252, 211, 77, 0.22);
+    color: #fef3c7;
     border-radius: 999px;
-    padding: 5px 12px;
+    padding: 5px 11px;
     cursor: pointer;
     transition: transform 0.14s, background 0.14s, opacity 0.14s;
     white-space: nowrap;
   }
-  .nav-btn:hover:not(:disabled) { background: #ffffff2e; }
+  .nav-btn:hover:not(:disabled) { background: rgba(252, 211, 77, 0.22); }
   .nav-btn:active:not(:disabled) { transform: scale(0.95); }
-  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .nav-btn:disabled { opacity: 0.32; cursor: not-allowed; }
+  .nav-btn.cover-btn {
+    background: rgba(185, 28, 28, 0.35);
+    border-color: rgba(252, 211, 77, 0.35);
+  }
+
   #pageInfo {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     min-width: 0;
+    flex: 1;
   }
   #pageNum {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.09em;
     color: #fcd34d;
     font-weight: 700;
   }
   #pageTitle {
-    font-size: 0.82rem;
-    color: #f3f4f6;
-    font-weight: 500;
+    font-size: 0.8rem;
+    color: #fffbeb;
+    font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 44vw;
+    max-width: 42vw;
   }
 
-  /* Indicador de fase y progreso */
+  /* Indicador de fase y barra de progreso */
+  #statusHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    transition: opacity 0.25s;
+  }
   #cap {
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #fcd34d;
-    margin: 0 0 5px;
+    margin: 0 0 4px;
     text-align: center;
     font-weight: 600;
   }
   #bar {
     width: min(92vw, 560px);
     height: 4px;
-    background: #ffffff22;
+    background: rgba(255, 255, 255, 0.16);
     border-radius: 9px;
     overflow: hidden;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   #bar i {
     display: block;
@@ -100,14 +121,15 @@
     transition: width 0.12s linear;
   }
 
-  /* Contenedor principal del lienzo */
+  /* Escenario 3D del libro físico */
   #wrap {
     flex: 1;
     width: 100%;
-    max-width: 820px;
+    max-width: 840px;
     min-height: 0;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     position: relative;
+    perspective: 1800px;
   }
   canvas {
     width: 100%;
@@ -121,10 +143,11 @@
     display: none;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     width: 100%;
     max-width: 680px;
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.28s ease;
+    z-index: 10;
   }
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(5px); }
@@ -141,7 +164,7 @@
 
   .big-btn {
     font: inherit;
-    font-size: 0.94rem;
+    font-size: 0.92rem;
     font-weight: 600;
     border-radius: 999px;
     padding: 10px 20px;
@@ -150,58 +173,67 @@
     transition: transform 0.15s, box-shadow 0.15s;
   }
   .big-btn:active { transform: scale(0.96); }
+  .btn-open {
+    background: linear-gradient(135deg, #fde047, #f59e0b);
+    color: #27150c;
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.45);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 11px 26px;
+    font-size: 0.98rem;
+  }
   .btn-user {
     background: linear-gradient(135deg, #fb7185, #f43f5e);
     color: #fff;
-    box-shadow: 0 4px 16px #f43f5e55;
+    box-shadow: 0 4px 16px rgba(244, 63, 94, 0.4);
   }
   .btn-auto {
     background: #fcd34d;
     color: #1f2937;
-    box-shadow: 0 4px 16px #fcd34d44;
+    box-shadow: 0 4px 16px rgba(252, 211, 77, 0.35);
   }
   .btn-skip {
-    background: #ffffff1f;
+    background: rgba(255, 255, 255, 0.14);
     color: #fde68a;
-    border: 1px solid #fcd34d55;
-    padding: 8px 18px;
-    font-size: 0.85rem;
+    border: 1px solid rgba(252, 211, 77, 0.4);
+    padding: 7px 18px;
+    font-size: 0.82rem;
     backdrop-filter: blur(6px);
   }
-  .btn-skip:hover { background: #ffffff30; }
+  .btn-skip:hover { background: rgba(255, 255, 255, 0.24); }
 
   /* Selector de tipos de pincel */
   #brushes {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 5px;
-    background: #ffffff10;
-    padding: 4px 8px;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.09);
+    padding: 4px 7px;
     border-radius: 999px;
-    border: 1px solid #ffffff18;
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
   .br-btn {
     font: inherit;
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     font-weight: 500;
     background: transparent;
     border: 1px solid transparent;
-    color: #d1d5db;
+    color: #e5e7eb;
     border-radius: 999px;
-    padding: 4px 10px;
+    padding: 4px 9px;
     cursor: pointer;
     transition: all 0.15s;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
   }
-  .br-btn:hover { background: #ffffff14; }
+  .br-btn:hover { background: rgba(255, 255, 255, 0.12); }
   .br-btn.act {
     background: #fcd34d;
     color: #1f2937;
     font-weight: 600;
-    box-shadow: 0 2px 8px #fcd34d44;
+    box-shadow: 0 2px 8px rgba(252, 211, 77, 0.35);
   }
 
   /* Paleta de colores */
@@ -209,17 +241,17 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 6px;
-    background: #ffffff12;
-    padding: 6px 10px;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 5px 10px;
     border-radius: 999px;
     backdrop-filter: blur(6px);
   }
   .sw {
-    width: 24px;
-    height: 24px;
+    width: 23px;
+    height: 23px;
     border-radius: 50%;
-    border: 2px solid #ffffff44;
+    border: 2px solid rgba(255, 255, 255, 0.4);
     cursor: pointer;
     transition: transform 0.15s, border-color 0.15s;
     padding: 0;
@@ -227,15 +259,15 @@
   .sw.act {
     transform: scale(1.22);
     border-color: #fff;
-    box-shadow: 0 0 10px #ffffff88;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.65);
   }
 
-  /* Tamaños de trazo y acciones */
+  /* Tamaños de trazo y botones de acción */
   .sz {
-    width: 26px;
-    height: 26px;
+    width: 25px;
+    height: 25px;
     border-radius: 50%;
-    background: #ffffff18;
+    background: rgba(255, 255, 255, 0.14);
     border: 1.5px solid transparent;
     display: grid;
     place-items: center;
@@ -243,28 +275,28 @@
     padding: 0;
   }
   .sz span {
-    background: #e5e7eb;
+    background: #f3f4f6;
     border-radius: 50%;
     display: block;
   }
   .sz.act {
     border-color: #fcd34d;
-    background: #ffffff30;
+    background: rgba(255, 255, 255, 0.25);
   }
 
   button.btn {
     font: inherit;
-    font-size: 0.78rem;
-    background: #ffffff1a;
-    border: 1px solid #ffffff26;
+    font-size: 0.76rem;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 999px;
-    padding: 6px 12px;
+    padding: 5px 11px;
     color: #f3f4f6;
     cursor: pointer;
     font-weight: 500;
     transition: transform 0.14s, background 0.14s;
   }
-  button.btn:hover { background: #ffffff28; }
+  button.btn:hover { background: rgba(255, 255, 255, 0.24); }
   button.btn:active { transform: scale(0.96); }
   button.pri {
     background: #fcd34d;
@@ -273,7 +305,7 @@
     font-weight: 600;
   }
 
-  /* Partículas flotantes al celebrar */
+  /* Partículas flotantes de celebración */
   .h {
     position: fixed;
     bottom: -30px;
@@ -286,29 +318,43 @@
     to { transform: translateY(-105vh) rotate(20deg); opacity: 0; }
   }
 
-  @media (max-width: 480px) {
-    .br-btn { font-size: 0.7rem; padding: 4px 8px; }
-    .sw { width: 22px; height: 22px; }
-    button.btn { font-size: 0.74rem; padding: 5px 10px; }
+  @media (max-width: 520px) {
+    .nav-btn { font-size: 0.7rem; padding: 4px 9px; }
+    .br-btn { font-size: 0.68rem; padding: 3px 7px; }
+    .sw { width: 21px; height: 21px; }
+    button.btn { font-size: 0.72rem; padding: 5px 9px; }
   }
 </style>
 </head>
 <body>
 
-<!-- Navegador de páginas del libro -->
-<nav id="bookNav" aria-label="Páginas del libro">
-  <button class="nav-btn" id="prevPage">◀ Anterior</button>
-  <div id="pageInfo">
-    <span id="pageNum">Página 1 de 4</span>
-    <span id="pageTitle">Snoopy Navideño</span>
+<!-- Navegador superior del libro -->
+<nav id="bookNav" aria-label="Navegación del libro">
+  <div class="nav-group">
+    <button class="nav-btn cover-btn" id="goCover" title="Volver a la portada">📕 Portada</button>
+    <button class="nav-btn" id="prevPage" title="Página anterior">◀</button>
   </div>
-  <button class="nav-btn" id="nextPage">Siguiente ▶</button>
+  <div id="pageInfo">
+    <span id="pageNum">Portada</span>
+    <span id="pageTitle">Edición Especial para Vany</span>
+  </div>
+  <div class="nav-group">
+    <button class="nav-btn" id="soundToggle" title="Sonido de hoja">🔊</button>
+    <button class="nav-btn" id="nextPage" title="Página siguiente">Siguiente ▶</button>
+  </div>
 </nav>
 
-<div id="cap">1 · Boceto a lápiz</div>
-<div id="bar"><i id="bi"></i></div>
+<div id="statusHeader">
+  <div id="cap">✨ Toca el libro para abrirlo</div>
+  <div id="bar"><i id="bi"></i></div>
+</div>
 
 <div id="wrap"><canvas id="cv"></canvas></div>
+
+<!-- Controles de Portada -->
+<div id="coverControls" class="panel" style="display:flex;">
+  <button class="big-btn btn-open" id="openBookBtn">📖 Abrir libro de Snoopy</button>
+</div>
 
 <!-- Controles durante animaciones (Saltar) -->
 <div id="animControls" class="panel">
@@ -325,7 +371,6 @@
 
 <!-- Herramientas de pintura manual -->
 <div id="tools" class="panel">
-  <!-- Selector de tipo de herramienta -->
   <div id="brushes">
     <button class="br-btn act" data-tool="brush" title="Acuarela suave">🖌️ Pincel</button>
     <button class="br-btn" data-tool="crayon" title="Crayola con textura">🖍️ Crayola</button>
@@ -335,10 +380,8 @@
     <button class="br-btn" data-tool="eraser" title="Borrador">🧽 Borrador</button>
   </div>
 
-  <!-- Paleta de colores -->
   <div id="pal"></div>
 
-  <!-- Tamaños y acciones -->
   <div class="row">
     <button class="sz" data-r="3" title="Trazo fino"><span style="width:5px;height:5px"></span></button>
     <button class="sz act" data-r="7" title="Trazo medio"><span style="width:10px;height:10px"></span></button>
@@ -366,7 +409,7 @@ const W = 200, H = 150;
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 
-// SVG oculto para calcular longitudes y puntos exactos de los trazos
+// SVG oculto para medir longitudes y calcular puntos exactos de trazo
 const svg = document.createElementNS(NS, 'svg');
 svg.style.cssText = 'position:absolute;width:0;height:0;visibility:hidden';
 document.body.appendChild(svg);
@@ -397,10 +440,62 @@ const heart = (cx, cy, s) =>
 const K = '#111827';
 
 // ============================================================================
-// DEFINICIÓN DE LAS 4 PÁGINAS DEL LIBRO
+// EFECTO DE SONIDO PROCEDURAL DE PASO DE HOJA (WEB AUDIO API)
+// ============================================================================
+let soundEnabled = true;
+let audioCtx = null;
+
+function playPageFlipSound() {
+  if (!soundEnabled) return;
+  try {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const dur = 0.36;
+    const bufferSize = Math.floor(audioCtx.sampleRate * dur);
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      const t = i / bufferSize;
+      // Envolvente suave tipo roce de papel
+      const env = Math.sin(Math.PI * t) * Math.pow(1 - t, 0.7);
+      data[i] = (Math.random() * 2 - 1) * env * 0.35;
+    }
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(650, audioCtx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(1900, audioCtx.currentTime + dur * 0.6);
+    filter.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + dur);
+    filter.Q.value = 1.4;
+
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.32, audioCtx.currentTime + 0.08);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+    noise.start();
+  } catch (err) {
+    // Ignorar si el navegador bloquea audio sin interacción previa
+  }
+}
+
+document.getElementById('soundToggle').onclick = () => {
+  soundEnabled = !soundEnabled;
+  document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
+};
+
+// ============================================================================
+// DEFINICIÓN DE LAS 7 PÁGINAS ILUSTRADAS DEL LIBRO
 // ============================================================================
 
-// --- PÁGINA 1: Snoopy Navideño en su casita (Original intacto) ---
+// --- PÁGINA 1: Snoopy Navideño ---
 const P1 = (() => {
   const ROOF = 'M36 76 L100 36 L164 76 Z', BODY = 'M50 76 V136 H150 V76 Z',
         DOOR = 'M82 136 V118 C82 100 118 100 118 118 V136 Z',
@@ -464,7 +559,7 @@ const P1 = (() => {
   };
 })();
 
-// --- PÁGINA 2: Snoopy Aviador en las Nubes ---
+// --- PÁGINA 2: Snoopy Aviador ---
 const P2 = (() => {
   const ROOF = 'M48 92 L100 58 L152 92 Z',
         BODY = 'M60 92 V136 H140 V92 Z',
@@ -528,7 +623,7 @@ const P2 = (() => {
   };
 })();
 
-// --- PÁGINA 3: Snoopy y Woodstock en Picnic de Flores ---
+// --- PÁGINA 3: Picnic de Flores ---
 const P3 = (() => {
   const HILL1 = 'M0 112 Q60 96 130 114 T200 108 V150 H0 Z',
         HILL2 = 'M0 124 Q90 110 200 124 V150 H0 Z',
@@ -543,7 +638,7 @@ const P3 = (() => {
         HANDLE = 'M134 104 C134 94 148 94 148 104',
         BIRD = circ(104, 92, 4.6),
         BEAK = 'M99.5 91.5 L95 93 L99.5 94.5Z',
-        FLOWER1 = (cx, cy) => [
+        FLOWER = (cx, cy) => [
           `M${cx} ${cy + 3} V${cy + 13}`,
           circ(cx - 3.5, cy, 2.8), circ(cx + 3.5, cy, 2.8),
           circ(cx, cy - 3.5, 2.8), circ(cx, cy + 3.5, 2.8),
@@ -551,8 +646,8 @@ const P3 = (() => {
         ],
         BFLY = 'M42 62 C36 55 32 63 39 66 C34 70 39 75 43 68 C47 75 52 70 47 66 C54 63 50 55 44 62Z';
 
-  const f1 = FLOWER1(24, 114);
-  const f2 = FLOWER1(174, 116);
+  const f1 = FLOWER(24, 114);
+  const f2 = FLOWER(174, 116);
 
   return {
     title: 'Picnic de Flores',
@@ -601,7 +696,7 @@ const P3 = (() => {
   };
 })();
 
-// --- PÁGINA 4: Snoopy Astronauta en la Luna ---
+// --- PÁGINA 4: Snoopy Astronauta ---
 const P4 = (() => {
   const MOON_GND = 'M0 122 Q100 104 200 122 V150 H0 Z',
         CRATER1 = 'M22 132 a14 5 0 1 0 28 0 a14 5 0 1 0 -28 0',
@@ -675,16 +770,204 @@ const P4 = (() => {
   };
 })();
 
-const PAGES = [P1, P2, P3, P4];
+// --- PÁGINA 5: Snoopy Músico / Jazz al Piano ---
+const P5 = (() => {
+  const FLOOR = 'M0 124 H200 V150 H0 Z',
+        PIANO_BODY = 'M94 82 C112 72 156 76 164 94 C168 103 158 108 142 108 H94 Z',
+        PIANO_LID = 'M96 82 L144 58 L162 84 Z',
+        LID_PROP = 'M146 68 L142 84',
+        KEYS = 'M90 96 H124 V103 H90 Z',
+        LEG1 = 'M98 108 V132 H103 V108 Z',
+        LEG2 = 'M148 108 V132 H153 V108 Z',
+        LEG3 = 'M126 108 V126 H130 V108 Z',
+        STOOL_TOP = 'M64 112 H84 V116 H64 Z',
+        STOOL_LEG = 'M72 116 V132 H76 V116 Z',
+        SBODY = 'M68 82 C62 90 62 106 68 112 H82 C86 106 86 90 80 82 Z',
+        ARM = 'M76 88 C82 93 90 96 96 97',
+        HEAD = 'M72 62 C80 58 90 62 90 70 C90 77 82 79 74 78 C66 79 55 77 53 71 C51 66 58 63 65 64 C68 63 70 62 72 62Z',
+        EAR = 'M80 67 C88 66 92 76 88 86 C85 89 80 86 79 79 C78 74 78 69 80 67Z',
+        NOSE = circ(53.5, 69.5, 4),
+        BIRD = circ(122, 62, 4.6),
+        BEAK = 'M117.5 61.5 L113 63 L117.5 64.5Z',
+        NOTE1 = 'M42 42 V28 L52 25 V39',
+        NOTE2 = 'M152 38 V24 L162 22 V36';
+
+  return {
+    title: 'Concierto de Jazz',
+    sky: ['#311042', '#7e22ce'],
+    particles: 'notes',
+    sk: [
+      'M0 124 H200', PIANO_BODY, PIANO_LID,
+      'M98 108 V132 M148 108 V132', STOOL_TOP, 'M74 116 V132',
+      'M66 82 H82 V112 H66 Z', circ(76, 70, 11),
+      'M50 70 a13 6 0 1 0 26 0 a13 6 0 1 0 -26 0',
+      circ(122, 62, 5)
+    ].map(P),
+    ink: [
+      ['M0 124 H200', 1.3, '#581c87'],
+      ['M20 0 L68 124 M180 0 L132 124', 0.6, 'rgba(253,224,71,.35)'],
+      [PIANO_LID, 1.7, K], [LID_PROP, 1.3, '#92400e'],
+      [PIANO_BODY, 2, K], [KEYS, 1.4, K],
+      ['M96 96 V103 M102 96 V103 M108 96 V103 M114 96 V103 M120 96 V103', 0.8, K],
+      [LEG1, 1.5, K], [LEG2, 1.5, K], [LEG3, 1.4, K],
+      [STOOL_TOP, 1.5, K], [STOOL_LEG, 1.5, K],
+      [SBODY, 1.7, K], [HEAD, 1.8, K], [EAR, 1.6, K], [NOSE, 1.2, K],
+      [circ(74, 67, 1.7), 1, K], ['M58 74 Q65 78 72 74', 1.1, K],
+      ['M67 82 H81', 2.4, '#ef4444'],
+      [ARM, 1.7, K],
+      [BIRD, 1.1, K], [BEAK, 0.9, K],
+      [NOTE1, 1.3, '#fde047'], [circ(40, 42, 2.4), 1.1, '#fde047'], [circ(50, 39, 2.4), 1.1, '#fde047'],
+      [NOTE2, 1.3, '#f472b6'], [circ(150, 38, 2.4), 1.1, '#f472b6'], [circ(160, 36, 2.4), 1.1, '#f472b6'],
+      [heart(104, 42, 0.9), 1.3, '#fb7185']
+    ].map(([d, w, c]) => ({ ...P(d), w, c })),
+    fill: [
+      [FLOOR, '#4c1d95'],
+      ['M20 0 L68 124 H132 L180 0 Z', 'rgba(253,224,71,.12)'],
+      [heart(104, 42, 0.9), '#fb7185'],
+      [PIANO_LID, '#1e293b'], [PIANO_BODY, '#0f172a'], [KEYS, '#ffffff'],
+      [LEG1, '#0f172a'], [LEG2, '#0f172a'], [LEG3, '#0f172a'],
+      [STOOL_TOP, '#dc2626'], [STOOL_LEG, '#334155'],
+      [SBODY, '#ffffff'], [HEAD, '#ffffff'], [EAR, K], [NOSE, K], [circ(74, 67, 1.7), K],
+      [BIRD, '#facc15'], [BEAK, '#f97316']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 })),
+    sh: [
+      ['M96 86 C116 80 146 84 158 95 C144 90 116 88 96 91 Z', 'rgba(255,255,255,.22)'],
+      ['M62 132 H158 V136 H62 Z', 'rgba(15,23,42,.45)']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 }))
+  };
+})();
+
+// --- PÁGINA 6: Snoopy Chef / Pastelería ---
+const P6 = (() => {
+  const TABLE = 'M16 106 H184 V114 H16 Z',
+        CLOTH = 'M24 114 H176 V142 H24 Z',
+        SBODY = 'M68 74 C62 84 62 100 68 106 H86 C92 100 92 84 86 74 Z',
+        HEAD = 'M74 52 C82 48 92 52 92 60 C92 68 84 70 76 69 C68 70 56 68 54 62 C52 56 60 53 67 54 C70 53 72 52 74 52Z',
+        EAR = 'M82 57 C91 56 95 67 91 77 C88 80 82 77 81 70 C80 64 80 59 82 57Z',
+        NOSE = circ(54.5, 60, 4.2),
+        CHEF_BAND = 'M68 46 H88 V52 H68 Z',
+        CHEF_PUFF = 'M66 46 C60 40 65 32 72 34 C75 28 83 28 86 34 C93 32 97 40 90 46 Z',
+        PLATE = 'M106 102 H148 L143 106 H111 Z',
+        COOKIE1 = 'M113 96 H141 V102 H113 Z',
+        COOKIE2 = 'M115 90 H139 V96 H115 Z',
+        COOKIE3 = 'M118 84 H136 V90 H118 Z',
+        MUG = 'M154 90 H170 V106 H154 Z',
+        MUG_H = 'M170 93 C176 93 176 103 170 103',
+        BIRD = circ(42, 96, 4.6),
+        BEAK = 'M46.5 95.5 L51 97 L46.5 98.5Z';
+
+  return {
+    title: 'Snoopy Pastelero',
+    sky: ['#fff1f2', '#fecdd3'],
+    particles: 'hearts',
+    sk: [
+      TABLE, CLOTH, 'M66 74 H88 V106 H66 Z', circ(78, 60, 11),
+      'M52 60 a13 6 0 1 0 26 0 a13 6 0 1 0 -26 0',
+      CHEF_PUFF, 'M112 84 H142 V106 H112 Z', MUG, circ(42, 96, 5)
+    ].map(P),
+    ink: [
+      ['M0 40 H200 M0 80 H200', 0.6, 'rgba(244,63,94,.2)'],
+      [CLOTH, 1.7, K], [TABLE, 1.8, K],
+      ['M44 114 V142 M68 114 V142 M92 114 V142 M116 114 V142 M140 114 V142 M164 114 V142', 0.8, '#f43f5e'],
+      [SBODY, 1.7, K], ['M72 74 H84 V98 H72 Z', 1.1, '#94a3b8'],
+      [HEAD, 1.8, K], [EAR, 1.6, K], [NOSE, 1.2, K],
+      [circ(75, 57, 1.7), 1, K], ['M59 64 Q66 68 73 64', 1.1, K],
+      [CHEF_BAND, 1.5, K], [CHEF_PUFF, 1.6, K],
+      [PLATE, 1.5, K], [COOKIE1, 1.4, K], [COOKIE2, 1.4, K], [COOKIE3, 1.4, K],
+      [circ(119, 99, 1), 1, '#451a03'], [circ(131, 98, 1), 1, '#451a03'],
+      [circ(123, 93, 1), 1, '#451a03'], [circ(134, 93, 1), 1, '#451a03'],
+      [circ(127, 87, 1), 1, '#451a03'],
+      [MUG, 1.5, K], [MUG_H, 1.5, K],
+      ['M159 84 Q156 78 160 72 M165 84 Q168 78 164 72', 1.1, '#9ca3af'],
+      [BIRD, 1.1, K], [BEAK, 0.9, K],
+      [heart(162, 62, 0.85), 1.2, '#e11d48'],
+      [heart(127, 70, 0.95), 1.2, '#e11d48']
+    ].map(([d, w, c]) => ({ ...P(d), w, c })),
+    fill: [
+      [CLOTH, '#ffe4e6'], [TABLE, '#fde68a'],
+      [heart(162, 62, 0.85), '#fb7185'], [heart(127, 70, 0.95), '#f43f5e'],
+      [SBODY, '#ffffff'], [HEAD, '#ffffff'], [EAR, K], [NOSE, K], [circ(75, 57, 1.7), K],
+      [CHEF_BAND, '#ffffff'], [CHEF_PUFF, '#ffffff'],
+      [PLATE, '#e0f2fe'], [COOKIE1, '#d97706'], [COOKIE2, '#f59e0b'], [COOKIE3, '#d97706'],
+      [MUG, '#f43f5e'],
+      [BIRD, '#facc15'], [BEAK, '#f97316']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 })),
+    sh: [
+      ['M24 114 H176 V119 H24 Z', 'rgba(136,19,55,.22)'],
+      ['M70 46 H86 V50 H70 Z', 'rgba(148,163,184,.35)']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 }))
+  };
+})();
+
+// --- PÁGINA 7: Snoopy Joe Cool en la Playa ---
+const P7 = (() => {
+  const SEA = 'M0 94 Q50 90 100 94 T200 94 V120 H0 Z',
+        SAND = 'M0 112 Q90 102 200 114 V150 H0 Z',
+        SUN = circ(30, 26, 13),
+        TRUNK = 'M164 114 Q156 76 170 44 L176 46 Q164 76 172 114 Z',
+        LEAF1 = 'M172 45 C154 34 138 40 134 50 C148 46 160 46 172 45Z',
+        LEAF2 = 'M172 45 C158 24 142 22 134 28 C148 30 160 36 172 45Z',
+        LEAF3 = 'M172 45 C186 26 200 28 200 38 C190 36 180 40 172 45Z',
+        LEAF4 = 'M172 45 C188 42 198 52 196 62 C188 54 180 48 172 45Z',
+        SURF = 'M116 116 L124 62 C126 52 136 52 137 63 L132 116 Z',
+        SBODY = 'M72 86 C66 94 66 108 72 114 H88 C94 108 94 94 88 86 Z',
+        HEAD = 'M76 64 C84 60 94 64 94 72 C94 80 86 82 78 81 C70 82 58 80 56 74 C54 68 62 65 69 66 C72 65 74 64 76 64Z',
+        EAR = 'M84 69 C93 68 97 79 93 89 C90 92 84 89 83 82 C82 76 82 71 84 69Z',
+        NOSE = circ(56.5, 72, 4.2),
+        GLASSES = 'M68 68 H82 V73 C82 75 76 75 75 72 C74 75 68 75 68 73 Z',
+        BIRD = circ(44, 102, 4.4),
+        FLOAT = 'M36 105 a9 3.5 0 1 0 18 0 a9 3.5 0 1 0 -18 0';
+
+  return {
+    title: 'Joe Cool en la Playa',
+    sky: ['#0284c7', '#7dd3fc'],
+    particles: 'petals',
+    sk: [
+      'M0 94 H200', 'M0 112 Q90 102 200 114', SUN,
+      'M166 114 Q160 76 172 45', SURF,
+      'M70 86 H90 V114 H70 Z', circ(80, 72, 11),
+      'M54 72 a13 6 0 1 0 26 0 a13 6 0 1 0 -26 0'
+    ].map(P),
+    ink: [
+      ['M0 94 Q50 90 100 94 T200 94', 1.2, '#0369a1'],
+      ['M20 102 Q36 99 52 102 M136 101 Q152 98 168 101', 1, '#e0f2fe'],
+      ['M0 112 Q90 102 200 114', 1.4, '#b45309'],
+      [SUN, 1.4, '#d97706'],
+      [TRUNK, 1.5, K], [LEAF1, 1.4, K], [LEAF2, 1.4, K], [LEAF3, 1.4, K], [LEAF4, 1.4, K],
+      [SURF, 1.7, K], ['M129 56 L124 116', 1.2, '#ef4444'],
+      [SBODY, 1.7, K], ['M69 86 H91 V99 H69 Z', 1.3, K],
+      [HEAD, 1.8, K], [EAR, 1.6, K], [NOSE, 1.2, K],
+      [GLASSES, 1.3, K], ['M82 69 L92 67', 1.1, K],
+      ['M61 76 Q68 80 75 76', 1.1, K],
+      [FLOAT, 1.4, K], [BIRD, 1.1, K], ['M48.5 101.5 L53 103 L48.5 104.5Z', 0.9, K],
+      [heart(106, 52, 0.9), 1.2, '#e11d48']
+    ].map(([d, w, c]) => ({ ...P(d), w, c })),
+    fill: [
+      [SEA, '#0ea5e9'], [SAND, '#fde68a'], [SUN, '#fde047'],
+      [heart(106, 52, 0.9), '#fb7185'],
+      [TRUNK, '#92400e'], [LEAF1, '#22c55e'], [LEAF2, '#16a34a'], [LEAF3, '#22c55e'], [LEAF4, '#16a34a'],
+      [SURF, '#fef08a'],
+      [SBODY, '#ffffff'], ['M69 86 H91 V99 H69 Z', '#ef4444'],
+      [HEAD, '#ffffff'], [EAR, K], [NOSE, K], [GLASSES, K],
+      [FLOAT, '#fb7185'], [BIRD, '#facc15'], ['M48.5 101.5 L53 103 L48.5 104.5Z', '#f97316']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 })),
+    sh: [
+      ['M0 124 Q90 114 200 126 V150 H0 Z', 'rgba(217,119,6,.22)'],
+      ['M66 113 H136 V116 H66 Z', 'rgba(120,53,15,.3)']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 }))
+  };
+})();
+
+const PAGES = [P1, P2, P3, P4, P5, P6, P7];
 
 // ============================================================================
-// ESTADO GLOBAL DEL LIBRO Y HERRAMIENTAS DE DIBUJO
+// ESTADO GLOBAL DEL LIBRO (0 = PORTADA, 1..7 = PÁGINAS)
 // ============================================================================
-let pageIdx = 0;
-// Almacena los trazos manuales independientes para cada página
+let currentView = 0; // 0 = Portada, 1..7 = Páginas ilustradas
 const pageStrokes = PAGES.map(() => []);
+const pageModes = PAGES.map(() => 'drawing'); // 'drawing' | 'choosing' | 'user' | 'auto'
 
-// Lienzo oculto de alta resolución para la capa de pintura manual
+// Lienzo oculto de alta resolución para la pintura manual de la página activa
 const SCALE = 4;
 const paint = document.createElement('canvas');
 paint.width = W * SCALE;
@@ -693,13 +976,25 @@ const pctx = paint.getContext('2d');
 pctx.scale(SCALE, SCALE);
 pctx.lineCap = pctx.lineJoin = 'round';
 
-// Modos: 'drawing' -> 'choosing' -> 'user' | 'auto'
-let mode = 'drawing';
+// Snapshot auxiliar para renderizar la animación 3D de cambio de hoja
+const snapFrom = document.createElement('canvas');
+const snapTo = document.createElement('canvas');
+
+// Estado de la animación de cambio de página (Page Flip 3D)
+let flipState = {
+  active: false,
+  dir: 1, // 1 = avanzar (derecha a izquierda), -1 = retroceder (izquierda a derecha)
+  start: 0,
+  dur: 620,
+  fromCover: false,
+  toCover: false
+};
+
 let tDraw = performance.now();
 let tAuto = 0;
 let autoFin = false;
 
-let curTool = 'brush'; // 'brush' | 'crayon' | 'chalk' | 'ink' | 'pencil' | 'eraser'
+let curTool = 'brush';
 let curColor = '#ef4444';
 let curSize = 7;
 let curStroke = null;
@@ -723,7 +1018,6 @@ COLORS.forEach((c, i) => {
     document.querySelectorAll('.sw').forEach(x => x.classList.remove('act'));
     b.classList.add('act');
     curColor = c;
-    // Si estaba en borrador, regresar automáticamente a pincel al elegir color
     if (curTool === 'eraser') selectTool('brush');
   };
   palEl.appendChild(b);
@@ -756,53 +1050,61 @@ function hash2d(x, y, seed) {
   return n - Math.floor(n);
 }
 
-function renderStroke(s) {
+function drawSmoothPath(targetCtx, pts, width) {
+  if (pts.length === 1) {
+    targetCtx.beginPath();
+    targetCtx.arc(pts[0].x, pts[0].y, width / 2, 0, Math.PI * 2);
+    targetCtx.fill();
+  } else {
+    targetCtx.beginPath();
+    targetCtx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      targetCtx.lineTo(pts[i].x, pts[i].y);
+    }
+    targetCtx.stroke();
+  }
+}
+
+function renderStrokeTo(targetCtx, s) {
   if (!s.pts.length) return;
-  pctx.save();
+  targetCtx.save();
 
   if (s.tool === 'eraser') {
-    pctx.globalCompositeOperation = 'destination-out';
-    pctx.strokeStyle = '#000';
-    pctx.fillStyle = '#000';
-    pctx.lineWidth = s.r * 1.25;
-    drawSmoothPath(s.pts, s.r * 1.25);
-    pctx.restore();
+    targetCtx.globalCompositeOperation = 'destination-out';
+    targetCtx.strokeStyle = '#000';
+    targetCtx.fillStyle = '#000';
+    targetCtx.lineWidth = s.r * 1.25;
+    drawSmoothPath(targetCtx, s.pts, s.r * 1.25);
+    targetCtx.restore();
     return;
   }
 
-  pctx.globalCompositeOperation = 'source-over';
-  pctx.strokeStyle = s.c;
-  pctx.fillStyle = s.c;
+  targetCtx.globalCompositeOperation = 'source-over';
+  targetCtx.strokeStyle = s.c;
+  targetCtx.fillStyle = s.c;
 
   if (s.tool === 'ink') {
-    // Tinta / Marcador: trazo sólido, opaco y muy nítido
-    pctx.globalAlpha = 1;
-    pctx.lineWidth = s.r;
-    drawSmoothPath(s.pts, s.r);
+    targetCtx.globalAlpha = 1;
+    targetCtx.lineWidth = s.r;
+    drawSmoothPath(targetCtx, s.pts, s.r);
   } else if (s.tool === 'brush') {
-    // Pincel / Acuarela: suave y translúcido con halo ligero
-    pctx.globalAlpha = 0.55;
-    pctx.shadowColor = s.c;
-    pctx.shadowBlur = s.r * 0.25;
-    pctx.lineWidth = s.r;
-    drawSmoothPath(s.pts, s.r);
+    targetCtx.globalAlpha = 0.55;
+    targetCtx.shadowColor = s.c;
+    targetCtx.shadowBlur = s.r * 0.25;
+    targetCtx.lineWidth = s.r;
+    drawSmoothPath(targetCtx, s.pts, s.r);
   } else if (s.tool === 'pencil') {
-    // Lápiz de color: fino, textura rayada y grafito suave
-    pctx.globalAlpha = 0.65;
+    targetCtx.globalAlpha = 0.65;
     const w = Math.max(0.8, s.r * 0.35);
-    pctx.lineWidth = w;
-    drawSmoothPath(s.pts, w);
-    // Segunda pasada ligeramente desplazada para simular veta de lápiz
-    pctx.globalAlpha = 0.3;
-    pctx.translate(0.35, -0.35);
-    drawSmoothPath(s.pts, w * 0.8);
+    targetCtx.lineWidth = w;
+    drawSmoothPath(targetCtx, s.pts, w);
+    targetCtx.globalAlpha = 0.3;
+    targetCtx.translate(0.35, -0.35);
+    drawSmoothPath(targetCtx, s.pts, w * 0.8);
   } else if (s.tool === 'crayon') {
-    // Crayola: núcleo ceroso + granos irregulares alrededor
-    pctx.globalAlpha = 0.78;
-    pctx.lineWidth = s.r * 0.85;
-    drawSmoothPath(s.pts, s.r * 0.85);
-
-    // Motas granuladas deterministas a lo largo del recorrido
+    targetCtx.globalAlpha = 0.78;
+    targetCtx.lineWidth = s.r * 0.85;
+    drawSmoothPath(targetCtx, s.pts, s.r * 0.85);
     const step = Math.max(0.8, s.r * 0.25);
     const radius = s.r * 0.55;
     for (let i = 0; i < s.pts.length; i++) {
@@ -821,13 +1123,12 @@ function renderStroke(s) {
           const rad = Math.sqrt(r2) * radius;
           const gx = cx + Math.cos(ang) * rad;
           const gy = cy + Math.sin(ang) * rad;
-          pctx.globalAlpha = 0.45 + r1 * 0.45;
-          pctx.fillRect(gx, gy, 0.55, 0.55);
+          targetCtx.globalAlpha = 0.45 + r1 * 0.45;
+          targetCtx.fillRect(gx, gy, 0.55, 0.55);
         }
       }
     }
   } else if (s.tool === 'chalk') {
-    // Gis / Tiza: textura polvorienta y porosa
     const step = Math.max(0.6, s.r * 0.2);
     const radius = s.r * 0.65;
     for (let i = 0; i < s.pts.length; i++) {
@@ -846,46 +1147,34 @@ function renderStroke(s) {
           const rad = Math.sqrt(r2) * radius;
           const gx = cx + Math.cos(ang) * rad;
           const gy = cy + Math.sin(ang) * rad;
-          pctx.globalAlpha = 0.14 + r1 * 0.22;
-          pctx.beginPath();
-          pctx.arc(gx, gy, 0.35 + r2 * 0.45, 0, Math.PI * 2);
-          pctx.fill();
+          targetCtx.globalAlpha = 0.14 + r1 * 0.22;
+          targetCtx.beginPath();
+          targetCtx.arc(gx, gy, 0.35 + r2 * 0.45, 0, Math.PI * 2);
+          targetCtx.fill();
         }
       }
     }
   }
 
-  pctx.restore();
+  targetCtx.restore();
 }
 
-function drawSmoothPath(pts, width) {
-  if (pts.length === 1) {
-    pctx.beginPath();
-    pctx.arc(pts[0].x, pts[0].y, width / 2, 0, Math.PI * 2);
-    pctx.fill();
-  } else {
-    pctx.beginPath();
-    pctx.moveTo(pts[0].x, pts[0].y);
-    for (let i = 1; i < pts.length; i++) {
-      pctx.lineTo(pts[i].x, pts[i].y);
-    }
-    pctx.stroke();
-  }
-}
-
-function redrawPaint() {
+function redrawPaint(pIdx = currentView - 1) {
   pctx.save();
   pctx.setTransform(1, 0, 0, 1, 0, 0);
   pctx.clearRect(0, 0, paint.width, paint.height);
   pctx.restore();
-  for (const s of pageStrokes[pageIdx]) {
-    renderStroke(s);
+  if (pIdx < 0 || pIdx >= PAGES.length) return;
+  for (const s of pageStrokes[pIdx]) {
+    renderStrokeTo(pctx, s);
   }
 }
 
 // ============================================================================
-// INTERACCIÓN TÁCTIL Y CON RATÓN EN EL LIENZO
+// INTERACCIÓN DE DIBUJO Y GESTOS DE DESLIZAMIENTO PARA PASAR PÁGINA
 // ============================================================================
+let swipeStart = null;
+
 function getPt(e) {
   const r = cv.getBoundingClientRect();
   const d = devicePixelRatio || 1;
@@ -896,77 +1185,665 @@ function getPt(e) {
 }
 
 cv.addEventListener('pointerdown', e => {
-  if (mode !== 'user') return;
-  const pt = getPt(e);
-  if (pt.x < 0 || pt.x > W || pt.y < 0 || pt.y > H) return;
-  cv.setPointerCapture(e.pointerId);
-  curStroke = { tool: curTool, c: curColor, r: curSize, pts: [pt] };
-  pageStrokes[pageIdx].push(curStroke);
-  redrawPaint();
+  if (flipState.active) return;
+
+  // En portada: registrar clic o inicio de deslizamiento
+  if (currentView === 0) {
+    swipeStart = { x: e.clientX, y: e.clientY, time: performance.now() };
+    return;
+  }
+
+  const pIdx = currentView - 1;
+  if (pageModes[pIdx] === 'user') {
+    const pt = getPt(e);
+    if (pt.x < 0 || pt.x > W || pt.y < 0 || pt.y > H) return;
+    cv.setPointerCapture(e.pointerId);
+    curStroke = { tool: curTool, c: curColor, r: curSize, pts: [pt] };
+    pageStrokes[pIdx].push(curStroke);
+    redrawPaint(pIdx);
+  } else {
+    // Permitir deslizar para cambiar de página cuando no se está pintando
+    swipeStart = { x: e.clientX, y: e.clientY, time: performance.now() };
+  }
 });
 
 cv.addEventListener('pointermove', e => {
   if (!curStroke) return;
   curStroke.pts.push(getPt(e));
-  redrawPaint();
+  redrawPaint(currentView - 1);
 });
 
-const endStroke = () => { curStroke = null; };
-cv.addEventListener('pointerup', endStroke);
-cv.addEventListener('pointercancel', endStroke);
+const endPointer = e => {
+  curStroke = null;
+  if (swipeStart && e.clientX !== undefined) {
+    const dx = e.clientX - swipeStart.x;
+    const dy = e.clientY - swipeStart.y;
+    const dt = performance.now() - swipeStart.time;
+    swipeStart = null;
+
+    if (currentView === 0) {
+      // Tap rápido en portada o deslizamiento hacia la izquierda abre el libro
+      if (Math.hypot(dx, dy) < 14 && dt < 450) {
+        goToView(1);
+      } else if (dx < -45 && Math.abs(dx) > Math.abs(dy)) {
+        goToView(1);
+      }
+    } else if (!flipState.active && Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.4 && dt < 500) {
+      if (dx < 0 && currentView < PAGES.length) {
+        goToView(currentView + 1);
+      } else if (dx > 0 && currentView > 0) {
+        goToView(currentView - 1);
+      }
+    }
+  }
+};
+cv.addEventListener('pointerup', endPointer);
+cv.addEventListener('pointercancel', endPointer);
 
 // ============================================================================
-// CONTROL DE MODOS, PÁGINAS Y BOTÓN SALTAR ANIMACIÓN
+// RENDERIZADO DE LA PORTADA ENCUADERNADA Y HOJAS DEL LIBRO
 // ============================================================================
-const D_DRAW = [5.5, 9.5];
-const D_AUTO = [7.5, 4.5];
+const COVER_EMBLEM_HEAD = P('M96 63 C103 59 112 63 112 71 C112 78 104 80 97 79 C90 80 79 78 77 72 C75 67 82 64 89 65 C92 64 94 63 96 63Z');
+const COVER_EMBLEM_EAR = P('M103 68 C111 67 115 77 111 87 C108 90 103 87 102 80 C101 75 101 70 103 68Z');
+const COVER_EMBLEM_NOSE = P(circ(77.5, 70.5, 3.8));
+const COVER_EMBLEM_HAT = P('M93 63 C96 55 104 50 112 52 C110 57 112 61 113 65 C107 61 99 61 93 63Z');
+const COVER_EMBLEM_HEART = P(heart(122, 60, 0.85));
 
-function setMode(m) {
-  mode = m;
+function drawBookCover(targetCtx, now) {
+  targetCtx.save();
+
+  // Sombra profunda del libro cerrado sobre la mesa
+  targetCtx.shadowColor = 'rgba(0, 0, 0, 0.72)';
+  targetCtx.shadowBlur = 26;
+  targetCtx.shadowOffsetY = 8;
+
+  // Canto de hojas blancas visible a la derecha
+  targetCtx.fillStyle = '#f5efe6';
+  targetCtx.beginPath();
+  targetCtx.roundRect(14, 5, W - 24, H - 10, [4, 10, 10, 4]);
+  targetCtx.fill();
+
+  targetCtx.shadowColor = 'transparent';
+
+  // Líneas de páginas en el canto derecho
+  targetCtx.strokeStyle = '#d6cfc2';
+  targetCtx.lineWidth = 0.5;
+  for (let x = W - 13; x <= W - 10.5; x += 1.2) {
+    targetCtx.beginPath();
+    targetCtx.moveTo(x, 7);
+    targetCtx.lineTo(x, H - 7);
+    targetCtx.stroke();
+  }
+
+  // Tapa dura encuadernada en rojo vino / borgoña cálido
+  const coverGrad = targetCtx.createLinearGradient(12, 4, W - 12, H - 4);
+  coverGrad.addColorStop(0, '#881337');
+  coverGrad.addColorStop(0.45, '#9f1239');
+  coverGrad.addColorStop(1, '#4c0519');
+  targetCtx.fillStyle = coverGrad;
+  targetCtx.beginPath();
+  targetCtx.roundRect(12, 4, W - 26, H - 8, [4, 9, 9, 4]);
+  targetCtx.fill();
+
+  // Lomo izquierdo encuadernado con relieve y costuras doradas
+  const spineGrad = targetCtx.createLinearGradient(12, 0, 27, 0);
+  spineGrad.addColorStop(0, '#3b0413');
+  spineGrad.addColorStop(0.5, '#6b0b26');
+  spineGrad.addColorStop(1, '#4c0519');
+  targetCtx.fillStyle = spineGrad;
+  targetCtx.beginPath();
+  targetCtx.roundRect(12, 4, 15, H - 8, [4, 0, 0, 4]);
+  targetCtx.fill();
+
+  // Hendidura del lomo
+  targetCtx.strokeStyle = 'rgba(0,0,0,0.55)';
+  targetCtx.lineWidth = 1.2;
+  targetCtx.beginPath();
+  targetCtx.moveTo(27, 4);
+  targetCtx.lineTo(27, H - 4);
+  targetCtx.stroke();
+
+  targetCtx.strokeStyle = 'rgba(253, 224, 71, 0.35)';
+  targetCtx.lineWidth = 0.7;
+  targetCtx.beginPath();
+  targetCtx.moveTo(28.2, 4);
+  targetCtx.lineTo(28.2, H - 4);
+  targetCtx.stroke();
+
+  // Nervios dorados en el lomo
+  targetCtx.fillStyle = '#fbbf24';
+  [24, 54, 96, 126].forEach(y => {
+    targetCtx.fillRect(13, y, 13, 1.6);
+  });
+
+  // Marco interior ornamental dorado
+  targetCtx.strokeStyle = '#fbbf24';
+  targetCtx.lineWidth = 1.1;
+  targetCtx.strokeRect(34, 12, W - 54, H - 24);
+  targetCtx.strokeStyle = 'rgba(253, 224, 71, 0.5)';
+  targetCtx.lineWidth = 0.5;
+  targetCtx.strokeRect(36.5, 14.5, W - 59, H - 29);
+
+  // Esquineras metálicas doradas en las puntas derechas
+  targetCtx.fillStyle = '#f59e0b';
+  // Esquina superior derecha
+  targetCtx.beginPath();
+  targetCtx.moveTo(W - 26, 4);
+  targetCtx.lineTo(W - 14, 4);
+  targetCtx.lineTo(W - 14, 16);
+  targetCtx.closePath();
+  targetCtx.fill();
+  // Esquina inferior derecha
+  targetCtx.beginPath();
+  targetCtx.moveTo(W - 26, H - 4);
+  targetCtx.lineTo(W - 14, H - 4);
+  targetCtx.lineTo(W - 14, H - 16);
+  targetCtx.closePath();
+  targetCtx.fill();
+
+  // Medallón central crema/dorado con Snoopy
+  targetCtx.fillStyle = '#fffbeb';
+  targetCtx.beginPath();
+  targetCtx.ellipse(104, 72, 34, 24, 0, 0, Math.PI * 2);
+  targetCtx.fill();
+  targetCtx.strokeStyle = '#f59e0b';
+  targetCtx.lineWidth = 1.6;
+  targetCtx.stroke();
+
+  // Silueta ilustrada de Snoopy en el medallón
+  targetCtx.fillStyle = '#ffffff';
+  targetCtx.strokeStyle = '#1f2937';
+  targetCtx.lineWidth = 1.4;
+  targetCtx.fill(COVER_EMBLEM_HEAD.p);
+  targetCtx.stroke(COVER_EMBLEM_HEAD.p);
+
+  targetCtx.fillStyle = '#1f2937';
+  targetCtx.fill(COVER_EMBLEM_EAR.p);
+  targetCtx.fill(COVER_EMBLEM_NOSE.p);
+
+  targetCtx.fillStyle = '#dc2626';
+  targetCtx.fill(COVER_EMBLEM_HAT.p);
+  targetCtx.stroke(COVER_EMBLEM_HAT.p);
+
+  // Ojo y sonrisa
+  targetCtx.beginPath();
+  targetCtx.arc(97, 68, 1.4, 0, Math.PI * 2);
+  targetCtx.fillStyle = '#1f2937';
+  targetCtx.fill();
+
+  targetCtx.beginPath();
+  targetCtx.moveTo(82, 74);
+  targetCtx.quadraticCurveTo(88, 77, 94, 74);
+  targetCtx.stroke();
+
+  // Corazón flotante animado junto a Snoopy
+  const pulse = 1 + Math.sin(now / 350) * 0.08;
+  targetCtx.save();
+  targetCtx.translate(122, 60);
+  targetCtx.scale(pulse, pulse);
+  targetCtx.translate(-122, -60);
+  targetCtx.fillStyle = '#f43f5e';
+  targetCtx.fill(COVER_EMBLEM_HEART.p);
+  targetCtx.restore();
+
+  // Tipografía dorada grabada en la portada
+  targetCtx.textAlign = 'center';
+  targetCtx.fillStyle = '#fde047';
+  targetCtx.font = 'bold 11.5px "Playfair Display", Georgia, serif';
+  targetCtx.fillText('EL GRAN LIBRO DE', 105, 29);
+
+  targetCtx.fillStyle = '#ffffff';
+  targetCtx.font = 'bold 16px "Playfair Display", Georgia, serif';
+  targetCtx.fillText('SNOOPY', 105, 43);
+
+  // Cinta dorada inferior con dedicatoria
+  targetCtx.fillStyle = 'rgba(251, 191, 36, 0.18)';
+  targetCtx.fillRect(46, 102, 118, 16);
+  targetCtx.strokeStyle = 'rgba(253, 224, 71, 0.65)';
+  targetCtx.lineWidth = 0.6;
+  targetCtx.strokeRect(46, 102, 118, 16);
+
+  targetCtx.fillStyle = '#fef08a';
+  targetCtx.font = 'italic 600 9.5px "Playfair Display", Georgia, serif';
+  targetCtx.fillText('Para Vany · Edición Especial ✨', 105, 113);
+
+  targetCtx.fillStyle = 'rgba(254, 243, 199, 0.78)';
+  targetCtx.font = '500 6.2px Inter, sans-serif';
+  targetCtx.fillText('7 Ilustraciones Interactivas para Colorear', 105, 129);
+
+  // Estrellitas decorativas
+  targetCtx.fillStyle = '#fde047';
+  targetCtx.fill(P(star(48, 72, 4.2)).p);
+  targetCtx.fill(P(star(160, 72, 4.2)).p);
+
+  targetCtx.restore();
+}
+
+function renderAtmosphereTo(targetCtx, type, now, alpha) {
+  targetCtx.save();
+  targetCtx.globalAlpha = alpha;
+  if (type === 'snow') {
+    targetCtx.fillStyle = 'rgba(255,255,255,.9)';
+    for (let i = 0; i < 40; i++) {
+      const x = (i * 47.3 + Math.sin(now / 1000 * 0.8 + i) * 6) % W;
+      const y = (now / 1000 * (8 + i % 5 * 3) + i * 29) % H;
+      targetCtx.beginPath();
+      targetCtx.arc(x, y, 0.7 + i % 3 * 0.3, 0, Math.PI * 2);
+      targetCtx.fill();
+    }
+  } else if (type === 'stars') {
+    for (let i = 0; i < 28; i++) {
+      const x = (i * 53.7) % W;
+      const y = (i * 31.3) % (H * 0.75);
+      const twinkle = 0.4 + 0.6 * Math.sin(now / 400 + i * 1.7);
+      targetCtx.fillStyle = `rgba(254, 249, 195, ${twinkle})`;
+      targetCtx.beginPath();
+      targetCtx.arc(x, y, 0.6 + (i % 2) * 0.4, 0, Math.PI * 2);
+      targetCtx.fill();
+    }
+  } else if (type === 'petals') {
+    const cols = ['rgba(251,113,133,.75)', 'rgba(253,224,71,.8)', 'rgba(244,114,182,.75)'];
+    for (let i = 0; i < 22; i++) {
+      const x = (i * 43.1 + Math.sin(now / 1200 + i) * 10 + W) % W;
+      const y = (now / 1000 * (6 + i % 4 * 2) + i * 37) % H;
+      targetCtx.fillStyle = cols[i % cols.length];
+      targetCtx.beginPath();
+      targetCtx.ellipse(x, y, 1.3, 0.7, now / 800 + i, 0, Math.PI * 2);
+      targetCtx.fill();
+    }
+  } else if (type === 'notes') {
+    targetCtx.font = '8px serif';
+    const syms = ['♪', '♫', '♩', '♬'];
+    for (let i = 0; i < 14; i++) {
+      const x = (25 + i * 13 + Math.sin(now / 700 + i) * 4) % (W - 20);
+      const y = (H - ((now / 1000 * (10 + i % 3 * 4) + i * 23) % (H - 15)));
+      targetCtx.fillStyle = i % 2 ? 'rgba(253,224,71,.85)' : 'rgba(244,114,182,.85)';
+      targetCtx.fillText(syms[i % syms.length], x, y);
+    }
+  } else if (type === 'hearts') {
+    targetCtx.font = '7px serif';
+    for (let i = 0; i < 16; i++) {
+      const x = (15 + i * 12 + Math.sin(now / 900 + i) * 5) % (W - 15);
+      const y = (H - ((now / 1000 * (8 + i % 4 * 3) + i * 19) % (H - 10)));
+      targetCtx.fillStyle = i % 2 ? 'rgba(244,63,94,.75)' : 'rgba(251,113,133,.8)';
+      targetCtx.fillText('♥', x, y);
+    }
+  }
+  targetCtx.restore();
+}
+
+function seq(a, sp) {
+  const tot = a.reduce((x, i) => x + i.len, 0);
+  let c = 0;
+  return a.map(i => {
+    const u = cl((sp * tot - c) / i.len);
+    c += i.len;
+    return u;
+  });
+}
+
+function lineTo(targetCtx, it, u, w, col, al) {
+  if (u <= 0) return;
+  targetCtx.save();
+  targetCtx.globalAlpha = al;
+  targetCtx.strokeStyle = col;
+  targetCtx.lineWidth = w;
+  targetCtx.lineCap = targetCtx.lineJoin = 'round';
+  targetCtx.setLineDash(u >= 1 ? [] : [it.len, it.len + 2]);
+  targetCtx.lineDashOffset = it.len * (1 - u);
+  targetCtx.stroke(it.p);
+  targetCtx.restore();
+}
+
+function wipeTo(targetCtx, it, u, col) {
+  if (u <= 0) return;
+  targetCtx.save();
+  targetCtx.beginPath();
+  targetCtx.rect(0, 0, W * u, H);
+  targetCtx.clip();
+  targetCtx.fillStyle = col;
+  targetCtx.fill(it.p);
+  targetCtx.restore();
+}
+
+// Dibuja una página ilustrada completa (con encuadernación lateral, papel crema, arte y sombra de lomo)
+function drawBookPage(targetCtx, pIdx, now, options = {}) {
+  const page = PAGES[pIdx];
+  const pMode = options.forceMode || pageModes[pIdx];
+  const td = options.forceFull ? 99 : (now - tDraw) / 1000;
+  const sp0 = pMode === 'drawing' ? cl(td / D_DRAW[0]) : 1;
+  const sp1 = pMode === 'drawing' ? cl((td - D_DRAW[0]) / D_DRAW[1]) : 1;
+
+  let sp2 = 0, sp3 = 0;
+  if (pMode === 'auto') {
+    const ta = options.forceFull ? 99 : (now - tAuto) / 1000;
+    sp2 = cl(ta / D_AUTO[0]);
+    sp3 = cl((ta - D_AUTO[0]) / D_AUTO[1]);
+  }
+
+  targetCtx.save();
+
+  // Cubierta de respaldo ligeramente visible en los bordes del libro abierto
+  targetCtx.shadowColor = 'rgba(0,0,0,.65)';
+  targetCtx.shadowBlur = 24;
+  targetCtx.fillStyle = '#6b0b26';
+  targetCtx.beginPath();
+  targetCtx.roundRect(-3, -2.5, W + 6, H + 5, 5);
+  targetCtx.fill();
+  targetCtx.shadowColor = 'transparent';
+
+  // Borde de hojas apiladas a la derecha
+  targetCtx.fillStyle = '#e7dfd1';
+  targetCtx.fillRect(W - 1, 1, 2.5, H - 2);
+
+  // Hoja de papel crema
+  targetCtx.fillStyle = '#f7f1e3';
+  targetCtx.fillRect(0, 0, W, H);
+
+  targetCtx.save();
+  targetCtx.beginPath();
+  targetCtx.rect(0, 0, W, H);
+  targetCtx.clip();
+
+  if (pMode === 'auto') {
+    if (sp2 > 0) {
+      const g = targetCtx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, page.sky[0]);
+      g.addColorStop(1, page.sky[1]);
+      targetCtx.globalAlpha = cl(sp2 * 5);
+      targetCtx.fillStyle = g;
+      targetCtx.fillRect(0, 0, W, H);
+      targetCtx.globalAlpha = 1;
+    }
+    seq(page.fill, sp2).forEach((u, i) => wipeTo(targetCtx, page.fill[i], u, page.fill[i].c));
+  } else {
+    // Pintura manual de esta página
+    if (options.useDirectStrokes) {
+      for (const s of pageStrokes[pIdx]) {
+        renderStrokeTo(targetCtx, s);
+      }
+    } else {
+      targetCtx.drawImage(paint, 0, 0, W, H);
+    }
+  }
+
+  // Boceto a lápiz
+  const ska = sp1 > 0 ? Math.max(0, 0.75 - sp1 * 1.2) : 0.75;
+  if (ska > 0) {
+    const us = seq(page.sk, sp0);
+    [[0.5, -0.4], [-0.4, 0.5]].forEach(([dx, dy], k) => {
+      targetCtx.save();
+      targetCtx.translate(dx, dy);
+      page.sk.forEach((it, i) => lineTo(targetCtx, it, cl(us[i] * (k ? 0.95 : 1)), 0.55, '#64748b', ska));
+      targetCtx.restore();
+    });
+  }
+
+  // Tinta
+  const ui = seq(page.ink, sp1);
+  page.ink.forEach((it, i) => lineTo(targetCtx, it, ui[i], it.w, it.c, 1));
+
+  // Luces, sombras y partículas en modo automático
+  if (pMode === 'auto') {
+    seq(page.sh, sp3).forEach((u, i) => wipeTo(targetCtx, page.sh[i], u, page.sh[i].c));
+    if (sp3 > 0) {
+      const v = targetCtx.createRadialGradient(W / 2, H / 2, H * 0.4, W / 2, H / 2, H * 0.95);
+      v.addColorStop(0, 'rgba(0,0,0,0)');
+      v.addColorStop(1, 'rgba(0,0,0,.38)');
+      targetCtx.globalAlpha = sp3;
+      targetCtx.fillStyle = v;
+      targetCtx.fillRect(0, 0, W, H);
+      targetCtx.globalAlpha = 1;
+      renderAtmosphereTo(targetCtx, page.particles, now, sp3);
+    }
+  }
+
+  // Sombra realista del pliegue / lomo interior izquierdo del libro
+  const crease = targetCtx.createLinearGradient(0, 0, 14, 0);
+  crease.addColorStop(0, 'rgba(28, 19, 17, 0.28)');
+  crease.addColorStop(0.35, 'rgba(28, 19, 17, 0.08)');
+  crease.addColorStop(1, 'rgba(28, 19, 17, 0)');
+  targetCtx.fillStyle = crease;
+  targetCtx.fillRect(0, 0, 14, H);
+
+  // Número de página discreto en la esquina inferior derecha
+  targetCtx.fillStyle = pMode === 'auto' && sp2 > 0.5 ? 'rgba(255,255,255,0.75)' : 'rgba(100,116,139,0.7)';
+  targetCtx.font = '600 5.5px Inter, sans-serif';
+  targetCtx.textAlign = 'right';
+  targetCtx.fillText(`${pIdx + 1}`, W - 5, H - 4);
+
+  targetCtx.restore();
+  targetCtx.restore();
+
+  return { sp0, sp1, sp2, sp3 };
+}
+
+// ============================================================================
+// CAPTURA DE INSTANTÁNEA Y ANIMACIÓN 3D DE CAMBIO DE HOJA (PAGE FLIP)
+// ============================================================================
+function captureViewToCanvas(targetCanvas, viewIndex, now) {
+  targetCanvas.width = cv.width;
+  targetCanvas.height = cv.height;
+  const tctx = targetCanvas.getContext('2d');
+  tctx.setTransform(1, 0, 0, 1, 0, 0);
+  tctx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+  const { s, ox, oy } = fit;
+  tctx.setTransform(s, 0, 0, s, ox, oy);
+
+  if (viewIndex === 0) {
+    drawBookCover(tctx, now);
+  } else {
+    drawBookPage(tctx, viewIndex - 1, now, { useDirectStrokes: true });
+  }
+}
+
+function renderPageFlip3D(progress) {
+  // Curva suave easeInOutCubic
+  const t = progress < 0.5
+    ? 4 * progress * progress * progress
+    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+  const { s, ox, oy } = fit;
+  const pageX = ox;
+  const pageY = oy;
+  const pageW = W * s;
+  const pageH = H * s;
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  if (flipState.dir === 1) {
+    // AVANZAR: La nueva página está debajo; la página actual gira de derecha a izquierda sobre el lomo
+    ctx.drawImage(snapTo, 0, 0);
+
+    // Sombra proyectada sobre la página inferior que se va descubriendo
+    ctx.save();
+    ctx.fillStyle = `rgba(0, 0, 0, ${(1 - t) * 0.42})`;
+    ctx.fillRect(pageX, pageY, pageW * (1 - t * 0.7), pageH);
+    ctx.restore();
+
+    // Hoja girando en perspectiva 3D
+    const scaleX = Math.cos(t * Math.PI); // +1 -> 0 -> -1
+    const lift = Math.sin(t * Math.PI) * (pageH * 0.045);
+
+    ctx.save();
+    ctx.translate(pageX, pageY);
+    ctx.scale(Math.abs(scaleX), 1);
+
+    if (scaleX >= 0) {
+      // Primera mitad del giro: se ve el anverso de la hoja actual encogiéndose hacia el lomo
+      ctx.drawImage(
+        snapFrom,
+        pageX, pageY, pageW, pageH,
+        0, -lift * 0.3, pageW, pageH + lift * 0.3
+      );
+      // Brillo y sombreado curvo en el borde que se levanta
+      const grad = ctx.createLinearGradient(0, 0, pageW, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0)');
+      grad.addColorStop(0.75, `rgba(255,255,255,${Math.sin(t * Math.PI) * 0.25})`);
+      grad.addColorStop(1, `rgba(0,0,0,${Math.sin(t * Math.PI) * 0.35})`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, -lift * 0.3, pageW, pageH + lift * 0.3);
+    } else {
+      // Segunda mitad del giro: se ve el reverso crema de la hoja terminando de asentarse
+      const revGrad = ctx.createLinearGradient(0, 0, pageW, 0);
+      revGrad.addColorStop(0, '#e5dccb');
+      revGrad.addColorStop(0.85, '#f7f1e3');
+      revGrad.addColorStop(1, '#dfd4c0');
+      ctx.fillStyle = revGrad;
+      ctx.shadowColor = 'rgba(0,0,0,0.35)';
+      ctx.shadowBlur = 18;
+      ctx.fillRect(0, -lift * 0.3, pageW, pageH + lift * 0.3);
+    }
+    ctx.restore();
+  } else {
+    // RETROCEDER: La página actual está debajo y la página anterior regresa desde el lomo
+    ctx.drawImage(snapFrom, 0, 0);
+
+    const scaleX = Math.cos((1 - t) * Math.PI);
+    const lift = Math.sin(t * Math.PI) * (pageH * 0.045);
+
+    ctx.save();
+    ctx.fillStyle = `rgba(0, 0, 0, ${t * 0.38})`;
+    ctx.fillRect(pageX, pageY, pageW * (t * 0.85), pageH);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(pageX, pageY);
+    ctx.scale(Math.abs(scaleX), 1);
+
+    if (scaleX < 0) {
+      const revGrad = ctx.createLinearGradient(0, 0, pageW, 0);
+      revGrad.addColorStop(0, '#e5dccb');
+      revGrad.addColorStop(1, '#f7f1e3');
+      ctx.fillStyle = revGrad;
+      ctx.fillRect(0, -lift * 0.3, pageW, pageH + lift * 0.3);
+    } else {
+      ctx.drawImage(
+        snapTo,
+        pageX, pageY, pageW, pageH,
+        0, -lift * 0.3, pageW, pageH + lift * 0.3
+      );
+      const grad = ctx.createLinearGradient(0, 0, pageW, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0)');
+      grad.addColorStop(1, `rgba(0,0,0,${Math.sin(t * Math.PI) * 0.3})`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, -lift * 0.3, pageW, pageH + lift * 0.3);
+    }
+    ctx.restore();
+  }
+}
+
+// ============================================================================
+// NAVEGACIÓN ENTRE PORTADA Y PÁGINAS + CONTROLES DE MODO
+// ============================================================================
+const D_DRAW = [5.0, 8.5];
+const D_AUTO = [7.0, 4.2];
+
+function updateUIForCurrentView() {
+  const isCover = currentView === 0;
+  document.getElementById('goCover').disabled = isCover;
+  document.getElementById('prevPage').disabled = isCover;
+  document.getElementById('nextPage').disabled = currentView >= PAGES.length;
+
+  document.getElementById('coverControls').style.display = isCover ? 'flex' : 'none';
+  document.getElementById('statusHeader').style.opacity = isCover ? '0.9' : '1';
+
+  if (isCover) {
+    document.getElementById('pageNum').textContent = 'Portada';
+    document.getElementById('pageTitle').textContent = 'Edición Especial para Vany';
+    document.getElementById('cap').textContent = '✨ Toca el libro o pulsa Abrir para comenzar';
+    document.getElementById('bi').style.width = '0%';
+    document.getElementById('choice').style.display = 'none';
+    document.getElementById('tools').style.display = 'none';
+    document.getElementById('autoControls').style.display = 'none';
+    document.getElementById('animControls').style.display = 'none';
+    cv.style.cursor = 'pointer';
+    resize();
+    return;
+  }
+
+  const pIdx = currentView - 1;
+  const m = pageModes[pIdx];
+  document.getElementById('pageNum').textContent = `Página ${currentView} de ${PAGES.length}`;
+  document.getElementById('pageTitle').textContent = PAGES[pIdx].title;
+
   document.getElementById('choice').style.display = m === 'choosing' ? 'flex' : 'none';
   document.getElementById('tools').style.display = m === 'user' ? 'flex' : 'none';
-  document.getElementById('autoControls').style.display = 'none';
+  document.getElementById('autoControls').style.display = (m === 'auto' && autoFin) ? 'flex' : 'none';
 
-  // Mostrar botón de saltar durante dibujo o durante autocoloreado
   const showSkip = m === 'drawing' || (m === 'auto' && !autoFin);
   document.getElementById('animControls').style.display = showSkip ? 'flex' : 'none';
-
   cv.style.cursor = m === 'user' ? 'crosshair' : 'default';
+  resize();
+}
+
+function setMode(m) {
+  if (currentView === 0) return;
+  const pIdx = currentView - 1;
+  pageModes[pIdx] = m;
 
   if (m === 'auto') {
     tAuto = performance.now();
     autoFin = false;
-    document.getElementById('animControls').style.display = 'flex';
-  }
-  if (m === 'drawing') {
+  } else if (m === 'drawing') {
     tDraw = performance.now();
+    autoFin = false;
   }
-  resize();
+  updateUIForCurrentView();
 }
 
-function loadPage(newIdx) {
-  if (newIdx < 0 || newIdx >= PAGES.length) return;
-  pageIdx = newIdx;
+function goToView(targetView) {
+  if (targetView < 0 || targetView > PAGES.length || targetView === currentView || flipState.active) return;
+
+  const now = performance.now();
+  const dir = targetView > currentView ? 1 : -1;
+
+  // Capturar la vista actual antes de cambiar
+  captureViewToCanvas(snapFrom, currentView, now);
+
+  // Actualizar índice y preparar lienzo de la nueva vista
+  currentView = targetView;
   curStroke = null;
-  document.getElementById('pageNum').textContent = `Página ${pageIdx + 1} de ${PAGES.length}`;
-  document.getElementById('pageTitle').textContent = PAGES[pageIdx].title;
-  document.getElementById('prevPage').disabled = pageIdx === 0;
-  document.getElementById('nextPage').disabled = pageIdx === PAGES.length - 1;
-  redrawPaint();
-  setMode('drawing');
+  if (currentView > 0) {
+    const pIdx = currentView - 1;
+    redrawPaint(pIdx);
+    if (pageModes[pIdx] === 'drawing') {
+      tDraw = now;
+    } else if (pageModes[pIdx] === 'auto') {
+      tAuto = now - (D_AUTO[0] + D_AUTO[1] + 1) * 1000;
+      autoFin = true;
+    }
+  }
+
+  // Capturar la vista destino para la animación de hoja
+  captureViewToCanvas(snapTo, currentView, now);
+
+  flipState = {
+    active: true,
+    dir,
+    start: now,
+    dur: 620
+  };
+
+  playPageFlipSound();
+  updateUIForCurrentView();
 }
 
-document.getElementById('prevPage').onclick = () => loadPage(pageIdx - 1);
-document.getElementById('nextPage').onclick = () => loadPage(pageIdx + 1);
+document.getElementById('openBookBtn').onclick = () => goToView(1);
+document.getElementById('goCover').onclick = () => goToView(0);
+document.getElementById('prevPage').onclick = () => goToView(currentView - 1);
+document.getElementById('nextPage').onclick = () => goToView(currentView + 1);
 
-// Botón "Saltar animación" inteligente según la fase actual
+// Botón "Saltar animación"
 document.getElementById('skipAnim').onclick = () => {
-  if (mode === 'drawing') {
-    // Adelanta el reloj de dibujo al final y pasa a elección
+  if (currentView === 0) return;
+  const pIdx = currentView - 1;
+  const m = pageModes[pIdx];
+  if (m === 'drawing') {
     tDraw = performance.now() - (D_DRAW[0] + D_DRAW[1] + 1) * 1000;
     setMode('choosing');
-  } else if (mode === 'auto') {
-    // Adelanta el reloj de autocoloreado al final
+  } else if (m === 'auto') {
     tAuto = performance.now() - (D_AUTO[0] + D_AUTO[1] + 1) * 1000;
   }
 };
@@ -975,23 +1852,34 @@ document.getElementById('chooseUser').onclick = () => setMode('user');
 document.getElementById('chooseAuto').onclick = () => setMode('auto');
 document.getElementById('switchAuto').onclick = () => setMode('auto');
 document.getElementById('switchUser').onclick = () => setMode('user');
-document.getElementById('undo').onclick = () => { pageStrokes[pageIdx].pop(); redrawPaint(); };
-document.getElementById('clear').onclick = () => { pageStrokes[pageIdx] = []; redrawPaint(); };
+document.getElementById('undo').onclick = () => {
+  if (currentView === 0) return;
+  pageStrokes[currentView - 1].pop();
+  redrawPaint(currentView - 1);
+};
+document.getElementById('clear').onclick = () => {
+  if (currentView === 0) return;
+  pageStrokes[currentView - 1] = [];
+  redrawPaint(currentView - 1);
+};
 document.getElementById('replay1').onclick = () => setMode('drawing');
 document.getElementById('replay2').onclick = () => setMode('drawing');
 
 function exportCurrentPage() {
-  const page = PAGES[pageIdx];
+  if (currentView === 0) return;
+  const pIdx = currentView - 1;
+  const page = PAGES[pIdx];
+  const m = pageModes[pIdx];
+
   const out = document.createElement('canvas');
   out.width = W * SCALE;
   out.height = H * SCALE;
   const octx = out.getContext('2d');
 
-  // Fondo papel
   octx.fillStyle = '#f7f1e3';
   octx.fillRect(0, 0, out.width, out.height);
 
-  if (mode === 'auto') {
+  if (m === 'auto') {
     octx.save();
     octx.scale(SCALE, SCALE);
     const g = octx.createLinearGradient(0, 0, 0, H);
@@ -1018,7 +1906,7 @@ function exportCurrentPage() {
   }
 
   const a = document.createElement('a');
-  a.download = `snoopy-pag${pageIdx + 1}-vany.png`;
+  a.download = `snoopy-pag${currentView}-vany.png`;
   a.href = out.toDataURL('image/png');
   a.click();
 }
@@ -1027,103 +1915,31 @@ document.getElementById('save').onclick = exportCurrentPage;
 document.getElementById('saveAuto').onclick = exportCurrentPage;
 
 // ============================================================================
-// RENDERIZADO PRINCIPAL Y ANIMACIONES
+// BUCLE PRINCIPAL DE ANIMACIÓN Y RENDERIZADO
 // ============================================================================
 function resize() {
   const d = devicePixelRatio || 1;
   const b = cv.getBoundingClientRect();
   cv.width = b.width * d;
   cv.height = b.height * d;
-  const s = Math.min(cv.width / (W + 16), cv.height / (H + 16));
+  const s = Math.min(cv.width / (W + 18), cv.height / (H + 16));
   fit = { s, ox: (cv.width - W * s) / 2, oy: (cv.height - H * s) / 2 };
-}
-
-function seq(a, sp) {
-  const tot = a.reduce((x, i) => x + i.len, 0);
-  let c = 0;
-  return a.map(i => {
-    const u = cl((sp * tot - c) / i.len);
-    c += i.len;
-    return u;
-  });
-}
-
-function line(it, u, w, col, al) {
-  if (u <= 0) return;
-  ctx.save();
-  ctx.globalAlpha = al;
-  ctx.strokeStyle = col;
-  ctx.lineWidth = w;
-  ctx.lineCap = ctx.lineJoin = 'round';
-  ctx.setLineDash(u >= 1 ? [] : [it.len, it.len + 2]);
-  ctx.lineDashOffset = it.len * (1 - u);
-  ctx.stroke(it.p);
-  ctx.restore();
-}
-
-function wipe(it, u, col) {
-  if (u <= 0) return;
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(0, 0, W * u, H);
-  ctx.clip();
-  ctx.fillStyle = col;
-  ctx.fill(it.p);
-  ctx.restore();
-}
-
-function renderAtmosphere(type, now, alpha) {
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  if (type === 'snow') {
-    ctx.fillStyle = 'rgba(255,255,255,.9)';
-    for (let i = 0; i < 40; i++) {
-      const x = (i * 47.3 + Math.sin(now / 1000 * 0.8 + i) * 6) % W;
-      const y = (now / 1000 * (8 + i % 5 * 3) + i * 29) % H;
-      ctx.beginPath();
-      ctx.arc(x, y, 0.7 + i % 3 * 0.3, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  } else if (type === 'stars') {
-    for (let i = 0; i < 28; i++) {
-      const x = (i * 53.7) % W;
-      const y = (i * 31.3) % (H * 0.75);
-      const twinkle = 0.4 + 0.6 * Math.sin(now / 400 + i * 1.7);
-      ctx.fillStyle = `rgba(254, 249, 195, ${twinkle})`;
-      ctx.beginPath();
-      ctx.arc(x, y, 0.6 + (i % 2) * 0.4, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  } else if (type === 'petals') {
-    const cols = ['rgba(251,113,133,.75)', 'rgba(253,224,71,.8)', 'rgba(244,114,182,.75)'];
-    for (let i = 0; i < 22; i++) {
-      const x = (i * 43.1 + Math.sin(now / 1200 + i) * 10 + W) % W;
-      const y = (now / 1000 * (6 + i % 4 * 2) + i * 37) % H;
-      ctx.fillStyle = cols[i % cols.length];
-      ctx.beginPath();
-      ctx.ellipse(x, y, 1.3, 0.7, now / 800 + i, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-  ctx.restore();
 }
 
 function frame(now) {
   requestAnimationFrame(frame);
-  const page = PAGES[pageIdx];
-  const td = (now - tDraw) / 1000;
-  const sp0 = cl(td / D_DRAW[0]);
-  const sp1 = cl((td - D_DRAW[0]) / D_DRAW[1]);
 
-  if (mode === 'drawing' && sp1 >= 1) {
-    setMode('choosing');
-  }
-
-  let sp2 = 0, sp3 = 0;
-  if (mode === 'auto') {
-    const ta = (now - tAuto) / 1000;
-    sp2 = cl(ta / D_AUTO[0]);
-    sp3 = cl((ta - D_AUTO[0]) / D_AUTO[1]);
+  // Si hay una transición 3D de hoja pasando en curso
+  if (flipState.active) {
+    const p = cl((now - flipState.start) / flipState.dur);
+    renderPageFlip3D(p);
+    if (p >= 1) {
+      flipState.active = false;
+      if (currentView > 0 && pageModes[currentView - 1] === 'drawing') {
+        tDraw = performance.now();
+      }
+    }
+    return;
   }
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1131,74 +1947,27 @@ function frame(now) {
   const { s, ox, oy } = fit;
   ctx.setTransform(s, 0, 0, s, ox, oy);
 
-  // Hoja de papel crema
-  ctx.save();
-  ctx.shadowColor = 'rgba(0,0,0,.6)';
-  ctx.shadowBlur = 28;
-  ctx.fillStyle = '#f7f1e3';
-  ctx.fillRect(0, 0, W, H);
-  ctx.restore();
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(0, 0, W, H);
-  ctx.clip();
-
-  if (mode === 'auto') {
-    // Cielo y relleno automático
-    if (sp2 > 0) {
-      const g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0, page.sky[0]);
-      g.addColorStop(1, page.sky[1]);
-      ctx.globalAlpha = cl(sp2 * 5);
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      ctx.globalAlpha = 1;
-    }
-    seq(page.fill, sp2).forEach((u, i) => wipe(page.fill[i], u, page.fill[i].c));
-  } else {
-    // Pintura manual guardada en esta página
-    ctx.drawImage(paint, 0, 0, W, H);
+  // Vista 0: Portada del Libro
+  if (currentView === 0) {
+    drawBookCover(ctx, now);
+    return;
   }
 
-  // Boceto a lápiz (se desvanece al entintar)
-  const ska = sp1 > 0 ? Math.max(0, 0.75 - sp1 * 1.2) : 0.75;
-  if (ska > 0) {
-    const us = seq(page.sk, sp0);
-    [[0.5, -0.4], [-0.4, 0.5]].forEach(([dx, dy], k) => {
-      ctx.save();
-      ctx.translate(dx, dy);
-      page.sk.forEach((it, i) => line(it, cl(us[i] * (k ? 0.95 : 1)), 0.55, '#64748b', ska));
-      ctx.restore();
-    });
+  // Vistas 1..7: Páginas ilustradas
+  const pIdx = currentView - 1;
+  const page = PAGES[pIdx];
+  const m = pageModes[pIdx];
+  const { sp0, sp1, sp2, sp3 } = drawBookPage(ctx, pIdx, now);
+
+  if (m === 'drawing' && sp1 >= 1) {
+    setMode('choosing');
   }
 
-  // Entintado
-  const ui = seq(page.ink, sp1);
-  page.ink.forEach((it, i) => line(it, ui[i], it.w, it.c, 1));
-
-  // Luces, sombras y atmósfera en modo automático
-  if (mode === 'auto') {
-    seq(page.sh, sp3).forEach((u, i) => wipe(page.sh[i], u, page.sh[i].c));
-    if (sp3 > 0) {
-      const v = ctx.createRadialGradient(W / 2, H / 2, H * 0.4, W / 2, H / 2, H * 0.95);
-      v.addColorStop(0, 'rgba(0,0,0,0)');
-      v.addColorStop(1, 'rgba(0,0,0,.38)');
-      ctx.globalAlpha = sp3;
-      ctx.fillStyle = v;
-      ctx.fillRect(0, 0, W, H);
-      ctx.globalAlpha = 1;
-      renderAtmosphere(page.particles, now, sp3);
-    }
-  }
-
-  ctx.restore();
-
-  // Herramientas animadas y textos de estado
   const cap = document.getElementById('cap');
   const bi = document.getElementById('bi');
+  const td = (now - tDraw) / 1000;
 
-  if (mode === 'drawing') {
+  if (m === 'drawing') {
     const st = sp0 < 1 ? 0 : 1;
     const arr = st ? page.ink : page.sk;
     const u = seq(arr, st ? sp1 : sp0);
@@ -1211,13 +1980,13 @@ function frame(now) {
     ctx.fillText(st ? '🖋️' : '✏️', ox + pt.x * s - 2, oy + pt.y * s + 3);
     cap.textContent = st ? '2 · Entintado' : '1 · Boceto a lápiz';
     bi.style.width = Math.min(100, td / (D_DRAW[0] + D_DRAW[1]) * 100) + '%';
-  } else if (mode === 'choosing') {
+  } else if (m === 'choosing') {
     cap.textContent = '✨ ¡Listo! ¿Cómo quieres colorearlo?';
     bi.style.width = '100%';
-  } else if (mode === 'user') {
+  } else if (m === 'user') {
     cap.textContent = '🎨 ¡Tu turno de colorear!';
     bi.style.width = '100%';
-  } else if (mode === 'auto') {
+  } else if (m === 'auto') {
     if (sp3 < 1) {
       const p = sp2 < 1 ? sp2 : sp3;
       const x = p * W;
@@ -1257,7 +2026,7 @@ function celebrar() {
 }
 
 addEventListener('resize', resize);
-loadPage(0);
+updateUIForCurrentView();
 requestAnimationFrame(frame);
 </script>
 </body>
