@@ -3,295 +3,1262 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Snoopy · para Vany</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap" rel="stylesheet">
+<title>Snoopy · Libro para Vany</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;margin:0}
-body{background:radial-gradient(circle at 50% 30%,#3b3b47,#1c1c24);color:#e5e7eb;font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:12px 12px calc(14px + env(safe-area-inset-bottom,0px));overflow:hidden;user-select:none}
-#cap{font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:#fcd34d;margin:2px 0 6px;text-align:center}
-#bar{width:min(92vw,560px);height:4px;background:#ffffff22;border-radius:9px;overflow:hidden;margin-bottom:8px}
-#bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f43f5e,#facc15);transition:width .15s linear}
-#wrap{flex:1;width:100%;max-width:820px;min-height:0;margin-bottom:10px;position:relative}
-canvas{width:100%;height:100%;display:block;touch-action:none}
-#choice,#tools,#autoControls{display:none;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:600px;animation:fadeIn .35s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.choice-row{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-.big-btn{font:inherit;font-size:.98rem;font-weight:600;border-radius:999px;padding:11px 22px;cursor:pointer;border:0;transition:transform .15s,box-shadow .15s}
-.big-btn:active{transform:scale(.96)}
-.btn-user{background:linear-gradient(135deg,#fb7185,#f43f5e);color:#fff;box-shadow:0 4px 16px #f43f5e55}
-.btn-auto{background:#fcd34d;color:#1f2937;box-shadow:0 4px 16px #fcd34d44}
-#pal{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;background:#ffffff12;padding:7px 12px;border-radius:999px;backdrop-filter:blur(6px)}
-.sw{width:26px;height:26px;border-radius:50%;border:2px solid #ffffff44;cursor:pointer;transition:transform .15s,border-color .15s}
-.sw.act{transform:scale(1.22);border-color:#fff;box-shadow:0 0 10px #ffffff88}
-.row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;align-items:center}
-.sz{width:26px;height:26px;border-radius:50%;background:#ffffff18;border:1.5px solid transparent;display:grid;place-items:center;cursor:pointer;padding:0}
-.sz span{background:#e5e7eb;border-radius:50%;display:block}
-.sz.act{border-color:#fcd34d;background:#ffffff30}
-button.btn{font:inherit;font-size:.82rem;background:#ffffff1a;border:1px solid #ffffff26;border-radius:999px;padding:7px 14px;color:#f3f4f6;cursor:pointer;font-weight:500}
-button.btn:active{transform:scale(.96)}
-button.pri{background:#fcd34d;color:#1f2937;border:0;font-weight:600}
-.h{position:fixed;bottom:-30px;font-size:24px;pointer-events:none;animation:up 4s ease-in forwards}
-@keyframes up{to{transform:translateY(-105vh) rotate(20deg);opacity:0}}
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: radial-gradient(circle at 50% 30%, #3b3b47, #1c1c24);
+    color: #e5e7eb;
+    font-family: 'Inter', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* Barra superior de navegación del libro */
+  #bookNav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: min(94vw, 600px);
+    background: #ffffff10;
+    border: 1px solid #ffffff1c;
+    border-radius: 999px;
+    padding: 5px 8px;
+    margin-bottom: 6px;
+    backdrop-filter: blur(8px);
+  }
+  .nav-btn {
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: #ffffff1a;
+    border: 1px solid #ffffff24;
+    color: #f3f4f6;
+    border-radius: 999px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: transform 0.14s, background 0.14s, opacity 0.14s;
+    white-space: nowrap;
+  }
+  .nav-btn:hover:not(:disabled) { background: #ffffff2e; }
+  .nav-btn:active:not(:disabled) { transform: scale(0.95); }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  #pageInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+  }
+  #pageNum {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #fcd34d;
+    font-weight: 700;
+  }
+  #pageTitle {
+    font-size: 0.82rem;
+    color: #f3f4f6;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 44vw;
+  }
+
+  /* Indicador de fase y progreso */
+  #cap {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fcd34d;
+    margin: 0 0 5px;
+    text-align: center;
+    font-weight: 600;
+  }
+  #bar {
+    width: min(92vw, 560px);
+    height: 4px;
+    background: #ffffff22;
+    border-radius: 9px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  #bar i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #f43f5e, #facc15);
+    transition: width 0.12s linear;
+  }
+
+  /* Contenedor principal del lienzo */
+  #wrap {
+    flex: 1;
+    width: 100%;
+    max-width: 820px;
+    min-height: 0;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+  }
+
+  /* Paneles inferiores de control */
+  .panel {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 680px;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .big-btn {
+    font: inherit;
+    font-size: 0.94rem;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 0;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .big-btn:active { transform: scale(0.96); }
+  .btn-user {
+    background: linear-gradient(135deg, #fb7185, #f43f5e);
+    color: #fff;
+    box-shadow: 0 4px 16px #f43f5e55;
+  }
+  .btn-auto {
+    background: #fcd34d;
+    color: #1f2937;
+    box-shadow: 0 4px 16px #fcd34d44;
+  }
+  .btn-skip {
+    background: #ffffff1f;
+    color: #fde68a;
+    border: 1px solid #fcd34d55;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    backdrop-filter: blur(6px);
+  }
+  .btn-skip:hover { background: #ffffff30; }
+
+  /* Selector de tipos de pincel */
+  #brushes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    background: #ffffff10;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid #ffffff18;
+  }
+  .br-btn {
+    font: inherit;
+    font-size: 0.74rem;
+    font-weight: 500;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #d1d5db;
+    border-radius: 999px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .br-btn:hover { background: #ffffff14; }
+  .br-btn.act {
+    background: #fcd34d;
+    color: #1f2937;
+    font-weight: 600;
+    box-shadow: 0 2px 8px #fcd34d44;
+  }
+
+  /* Paleta de colores */
+  #pal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    background: #ffffff12;
+    padding: 6px 10px;
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+  }
+  .sw {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #ffffff44;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+    padding: 0;
+  }
+  .sw.act {
+    transform: scale(1.22);
+    border-color: #fff;
+    box-shadow: 0 0 10px #ffffff88;
+  }
+
+  /* Tamaños de trazo y acciones */
+  .sz {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff18;
+    border: 1.5px solid transparent;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+  }
+  .sz span {
+    background: #e5e7eb;
+    border-radius: 50%;
+    display: block;
+  }
+  .sz.act {
+    border-color: #fcd34d;
+    background: #ffffff30;
+  }
+
+  button.btn {
+    font: inherit;
+    font-size: 0.78rem;
+    background: #ffffff1a;
+    border: 1px solid #ffffff26;
+    border-radius: 999px;
+    padding: 6px 12px;
+    color: #f3f4f6;
+    cursor: pointer;
+    font-weight: 500;
+    transition: transform 0.14s, background 0.14s;
+  }
+  button.btn:hover { background: #ffffff28; }
+  button.btn:active { transform: scale(0.96); }
+  button.pri {
+    background: #fcd34d;
+    color: #1f2937;
+    border: 0;
+    font-weight: 600;
+  }
+
+  /* Partículas flotantes al celebrar */
+  .h {
+    position: fixed;
+    bottom: -30px;
+    font-size: 24px;
+    pointer-events: none;
+    animation: up 4s ease-in forwards;
+    z-index: 50;
+  }
+  @keyframes up {
+    to { transform: translateY(-105vh) rotate(20deg); opacity: 0; }
+  }
+
+  @media (max-width: 480px) {
+    .br-btn { font-size: 0.7rem; padding: 4px 8px; }
+    .sw { width: 22px; height: 22px; }
+    button.btn { font-size: 0.74rem; padding: 5px 10px; }
+  }
 </style>
 </head>
 <body>
-<div id="cap">1 · Boceto a lápiz</div><div id="bar"><i id="bi"></i></div>
+
+<!-- Navegador de páginas del libro -->
+<nav id="bookNav" aria-label="Páginas del libro">
+  <button class="nav-btn" id="prevPage">◀ Anterior</button>
+  <div id="pageInfo">
+    <span id="pageNum">Página 1 de 4</span>
+    <span id="pageTitle">Snoopy Navideño</span>
+  </div>
+  <button class="nav-btn" id="nextPage">Siguiente ▶</button>
+</nav>
+
+<div id="cap">1 · Boceto a lápiz</div>
+<div id="bar"><i id="bi"></i></div>
+
 <div id="wrap"><canvas id="cv"></canvas></div>
 
+<!-- Controles durante animaciones (Saltar) -->
+<div id="animControls" class="panel">
+  <button class="big-btn btn-skip" id="skipAnim">⏭ Saltar animación</button>
+</div>
+
 <!-- Elección al terminar el entintado -->
-<div id="choice">
-  <div class="choice-row">
+<div id="choice" class="panel">
+  <div class="row" style="gap: 12px;">
     <button class="big-btn btn-user" id="chooseUser">🎨 Lo pinto yo</button>
     <button class="big-btn btn-auto" id="chooseAuto">✨ Píntalo solo</button>
   </div>
 </div>
 
-<!-- Herramientas si elige pintarlo ella -->
-<div id="tools">
+<!-- Herramientas de pintura manual -->
+<div id="tools" class="panel">
+  <!-- Selector de tipo de herramienta -->
+  <div id="brushes">
+    <button class="br-btn act" data-tool="brush" title="Acuarela suave">🖌️ Pincel</button>
+    <button class="br-btn" data-tool="crayon" title="Crayola con textura">🖍️ Crayola</button>
+    <button class="br-btn" data-tool="chalk" title="Gis / Tiza pastel">🪨 Gis</button>
+    <button class="br-btn" data-tool="ink" title="Tinta / Marcador sólido">🖋️ Tinta</button>
+    <button class="br-btn" data-tool="pencil" title="Lápiz de color">✏️ Lápiz</button>
+    <button class="br-btn" data-tool="eraser" title="Borrador">🧽 Borrador</button>
+  </div>
+
+  <!-- Paleta de colores -->
   <div id="pal"></div>
+
+  <!-- Tamaños y acciones -->
   <div class="row">
-    <button class="sz" data-r="3" title="Pincel fino"><span style="width:5px;height:5px"></span></button>
-    <button class="sz act" data-r="7" title="Pincel medio"><span style="width:10px;height:10px"></span></button>
-    <button class="sz" data-r="14" title="Pincel grueso"><span style="width:16px;height:16px"></span></button>
+    <button class="sz" data-r="3" title="Trazo fino"><span style="width:5px;height:5px"></span></button>
+    <button class="sz act" data-r="7" title="Trazo medio"><span style="width:10px;height:10px"></span></button>
+    <button class="sz" data-r="14" title="Trazo grueso"><span style="width:16px;height:16px"></span></button>
     <button class="btn" id="undo">↩ Deshacer</button>
     <button class="btn" id="clear">🧹 Limpiar</button>
-    <button class="btn" id="switchAuto">✨ Mejor píntalo solo</button>
+    <button class="btn" id="switchAuto">✨ Píntalo solo</button>
     <button class="btn" id="replay1">🔄 Redibujar</button>
     <button class="btn pri" id="save">💾 Guardar</button>
   </div>
 </div>
 
-<!-- Controles cuando termina de pintarse solo -->
-<div id="autoControls">
+<!-- Controles cuando termina el autocoloreado -->
+<div id="autoControls" class="panel">
   <div class="row">
     <button class="btn" id="switchUser">🎨 Quiero pintarlo yo</button>
-    <button class="btn pri" id="replay2">🔄 Ver de nuevo</button>
+    <button class="btn" id="replay2">🔄 Ver de nuevo</button>
+    <button class="btn pri" id="saveAuto">💾 Guardar</button>
   </div>
 </div>
 
 <script>
-const NS='http://www.w3.org/2000/svg',W=200,H=150,cv=document.getElementById('cv'),ctx=cv.getContext('2d');
-const svg=document.createElementNS(NS,'svg');svg.style.cssText='position:absolute;width:0;height:0;visibility:hidden';document.body.appendChild(svg);
-const P=d=>{const e=document.createElementNS(NS,'path');e.setAttribute('d',d);svg.appendChild(e);return{e,p:new Path2D(d),len:e.getTotalLength()||1}};
-const cl=x=>Math.max(0,Math.min(1,x));
-const circ=(x,y,r)=>`M${x-r} ${y} a${r} ${r} 0 1 0 ${2*r} 0 a${r} ${r} 0 1 0 ${-2*r} 0Z`;
+const NS = 'http://www.w3.org/2000/svg';
+const W = 200, H = 150;
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
 
-const ROOF='M36 76 L100 36 L164 76 Z',BODY='M50 76 V136 H150 V76 Z',DOOR='M82 136 V118 C82 100 118 100 118 118 V136 Z',GROUND='M0 136 C40 128 80 140 120 134 C160 128 180 136 200 132';
-const SB='M88 30 C90 20 120 18 134 25 C143 29 147 36 141 40 C128 44 100 43 90 38 C88 36 87 33 88 30Z',
-FOOT='M130 40 C134 33 148 34 152 40 C153 44 134 45 130 40Z',TAIL='M142 27 C148 21 155 23 153 29 C151 33 146 31 143 31Z',
-HEAD='M72 18 C80 14 91 19 91 28 C91 36 82 38 74 36 C66 37 53 36 50 30 C48 24 56 21 63 22 C66 21 69 19 72 18Z',
-EAR='M80 24 C90 22 94 34 90 46 C86 50 80 46 79 38 C78 32 78 27 80 24Z',NOSE=circ(50.5,27.5,4.6),
-HAT='M69 18 C73 9 82 3 91 6 C89 11 91 16 92 20 C85 16 76 16 69 18Z',BRIM='M67 19 C74 15 86 14 93 20 C86 18 74 19 67 21Z',
-BIRD=circ(120,17,5),BEAK='M115 16 L110 17.5 L115 19Z',BUCKET='M158 98 L182 98 L178 136 L162 136 Z',
-HEART='M28 46 C28 40 20 38 20 44 C20 50 28 54 28 58 C28 54 36 50 36 44 C36 38 28 40 28 46Z',
-STAR=(x,y,R)=>{let d='';for(let i=0;i<10;i++){const a=i*Math.PI/5-Math.PI/2,q=i%2?R*.45:R;d+=(i?'L':'M')+(x+Math.cos(a)*q).toFixed(1)+' '+(y+Math.sin(a)*q).toFixed(1)}return d+'Z'};
+// SVG oculto para calcular longitudes y puntos exactos de los trazos
+const svg = document.createElementNS(NS, 'svg');
+svg.style.cssText = 'position:absolute;width:0;height:0;visibility:hidden';
+document.body.appendChild(svg);
 
-// 1) Boceto
-const SK=['M36 76 L100 36 L164 76','M50 76 V136 H150 V76','M86 31 a30 13 0 1 0 60 0 a30 13 0 1 0 -60 0',circ(80,27,12),'M44 28 a14 7 0 1 0 28 0 a14 7 0 1 0 -28 0','M80 10 V46 M44 28 H100','M80 22 Q94 30 88 50','M156 96 L184 96 L180 138 L160 138Z','M0 134 C60 126 140 140 200 132',circ(170,28,12),'M10 44 Q28 30 46 44 Q28 62 10 44'].map(P);
+const P = d => {
+  const e = document.createElementNS(NS, 'path');
+  e.setAttribute('d', d);
+  svg.appendChild(e);
+  return { e, p: new Path2D(d), len: e.getTotalLength() || 1 };
+};
+const cl = x => Math.max(0, Math.min(1, x));
+const circ = (x, y, r) => `M${x - r} ${y} a${r} ${r} 0 1 0 ${2 * r} 0 a${r} ${r} 0 1 0 ${-2 * r} 0Z`;
+const star = (x, y, R) => {
+  let d = '';
+  for (let i = 0; i < 10; i++) {
+    const a = i * Math.PI / 5 - Math.PI / 2;
+    const q = i % 2 ? R * 0.45 : R;
+    d += (i ? 'L' : 'M') + (x + Math.cos(a) * q).toFixed(1) + ' ' + (y + Math.sin(a) * q).toFixed(1);
+  }
+  return d + 'Z';
+};
+const heart = (cx, cy, s) =>
+  `M${cx} ${cy} C${cx} ${cy - 6 * s} ${cx - 8 * s} ${cy - 8 * s} ${cx - 8 * s} ${cy - 2 * s} ` +
+  `C${cx - 8 * s} ${cy + 4 * s} ${cx} ${cy + 8 * s} ${cx} ${cy + 12 * s} ` +
+  `C${cx} ${cy + 8 * s} ${cx + 8 * s} ${cy + 4 * s} ${cx + 8 * s} ${cy - 2 * s} ` +
+  `C${cx + 8 * s} ${cy - 8 * s} ${cx} ${cy - 6 * s} ${cx} ${cy}Z`;
 
-// 2) Tinta
-const K='#111827';
-const INK=[[GROUND,1.2,K],[ROOF,2.2,K],[BODY,2,K],[DOOR,1.8,K],['M50 94 H150 M50 110 H150 M50 126 H150',.6,'#7f1d1d'],
-[SB,1.7,K],[FOOT,1.5,K],[TAIL,1.5,K],[HEAD,1.8,K],[EAR,1.6,K],[NOSE,1.2,K],[circ(74,23,1.8),1,K],['M70 19 Q74 17 78 19',1,K],['M56 33 Q64 38 72 34',1.1,K],['M90 27 C93 31 93 36 91 39',2.6,'#dc2626'],
-[HAT,1.6,K],[BRIM,1.2,K],[circ(91,5.5,4),1.2,K],[BIRD,1.1,K],[BEAK,.9,K],[BUCKET,1.6,K],['M166 98 L167 136 M174 98 L173 136',.6,'#9ca3af'],[circ(162,94,5),1.1,K],[circ(170,90,5),1.1,K],[circ(178,94,5),1.1,K],
-[circ(170,28,12),1.2,'#92400e'],[HEART,1.4,'#9f1239'],[STAR(24,86,9),1.2,'#92400e'],[STAR(178,80,7),1.2,'#92400e']].map(([d,w,c])=>({...P(d),w,c}));
+const K = '#111827';
 
-// 3) Color automático
-const FILL=[['M0 136 C40 128 80 140 120 134 C160 128 180 136 200 132 V150 H0Z','#eaf4ff'],[circ(170,28,12),'#fef9c3'],[HEART,'#fb7185'],[STAR(24,86,9),'#fde047'],[STAR(178,80,7),'#fde047'],
-[ROOF,'#ef4444'],[BODY,'#dc2626'],[DOOR,'#1c0a0a'],[BUCKET,'#fff'],['M164 98 L170 98 L170.5 136 L165.5 136Z','#ef4444'],['M175 98 L182 98 L178 136 L175.5 136Z','#ef4444'],[circ(162,94,5),'#fef08a'],[circ(170,90,5),'#fef08a'],[circ(178,94,5),'#fef08a'],
-[SB,'#fff'],[FOOT,'#fff'],[TAIL,'#fff'],[HEAD,'#fff'],[EAR,K],[NOSE,K],[circ(74,23,1.8),K],[HAT,'#dc2626'],[BRIM,'#fff'],[circ(91,5.5,4),'#fff'],[BIRD,'#facc15'],[BEAK,'#f97316']].map(([d,c])=>({...P(d),c,len:1}));
+// ============================================================================
+// DEFINICIÓN DE LAS 4 PÁGINAS DEL LIBRO
+// ============================================================================
 
-// 4) Luces y sombras automáticas
-const SH=[['M50 76 H150 V86 H50Z','rgba(0,0,0,.35)'],['M128 86 H150 V136 H128Z','rgba(0,0,0,.18)'],['M92 38 C110 46 130 46 142 40 L141 44 C124 50 104 49 92 41Z','rgba(30,41,59,.3)'],['M92 24 C104 22 120 21 132 25 C120 25 104 26 92 29Z','rgba(255,255,255,.25)'],['M40 74 L99 39 L99 41 L44 74Z','rgba(255,255,255,.35)'],['M0 134 C40 126 80 138 120 132 C160 126 180 134 200 130 V132 C180 138 160 130 120 136Z','rgba(148,163,184,.4)']].map(([d,c])=>({...P(d),c,len:1}));
+// --- PÁGINA 1: Snoopy Navideño en su casita (Original intacto) ---
+const P1 = (() => {
+  const ROOF = 'M36 76 L100 36 L164 76 Z', BODY = 'M50 76 V136 H150 V76 Z',
+        DOOR = 'M82 136 V118 C82 100 118 100 118 118 V136 Z',
+        GROUND = 'M0 136 C40 128 80 140 120 134 C160 128 180 136 200 132';
+  const SB = 'M88 30 C90 20 120 18 134 25 C143 29 147 36 141 40 C128 44 100 43 90 38 C88 36 87 33 88 30Z',
+        FOOT = 'M130 40 C134 33 148 34 152 40 C153 44 134 45 130 40Z',
+        TAIL = 'M142 27 C148 21 155 23 153 29 C151 33 146 31 143 31Z',
+        HEAD = 'M72 18 C80 14 91 19 91 28 C91 36 82 38 74 36 C66 37 53 36 50 30 C48 24 56 21 63 22 C66 21 69 19 72 18Z',
+        EAR = 'M80 24 C90 22 94 34 90 46 C86 50 80 46 79 38 C78 32 78 27 80 24Z',
+        NOSE = circ(50.5, 27.5, 4.6),
+        HAT = 'M69 18 C73 9 82 3 91 6 C89 11 91 16 92 20 C85 16 76 16 69 18Z',
+        BRIM = 'M67 19 C74 15 86 14 93 20 C86 18 74 19 67 21Z',
+        BIRD = circ(120, 17, 5), BEAK = 'M115 16 L110 17.5 L115 19Z',
+        BUCKET = 'M158 98 L182 98 L178 136 L162 136 Z',
+        HEART = heart(28, 46, 1);
 
-// Lienzo oculto para pintura libre
-const SCALE=4,paint=document.createElement('canvas');paint.width=W*SCALE;paint.height=H*SCALE;
-const pctx=paint.getContext('2d');pctx.scale(SCALE,SCALE);pctx.lineCap=pctx.lineJoin='round';
+  return {
+    title: 'Snoopy Navideño',
+    sky: ['#0f2a5c', '#4a7fc1'],
+    particles: 'snow',
+    sk: [
+      'M36 76 L100 36 L164 76', 'M50 76 V136 H150 V76',
+      'M86 31 a30 13 0 1 0 60 0 a30 13 0 1 0 -60 0', circ(80, 27, 12),
+      'M44 28 a14 7 0 1 0 28 0 a14 7 0 1 0 -28 0', 'M80 10 V46 M44 28 H100',
+      'M80 22 Q94 30 88 50', 'M156 96 L184 96 L180 138 L160 138Z',
+      'M0 134 C60 126 140 140 200 132', circ(170, 28, 12), 'M10 44 Q28 30 46 44 Q28 62 10 44'
+    ].map(P),
+    ink: [
+      [GROUND, 1.2, K], [ROOF, 2.2, K], [BODY, 2, K], [DOOR, 1.8, K],
+      ['M50 94 H150 M50 110 H150 M50 126 H150', 0.6, '#7f1d1d'],
+      [SB, 1.7, K], [FOOT, 1.5, K], [TAIL, 1.5, K], [HEAD, 1.8, K], [EAR, 1.6, K], [NOSE, 1.2, K],
+      [circ(74, 23, 1.8), 1, K], ['M70 19 Q74 17 78 19', 1, K], ['M56 33 Q64 38 72 34', 1.1, K],
+      ['M90 27 C93 31 93 36 91 39', 2.6, '#dc2626'],
+      [HAT, 1.6, K], [BRIM, 1.2, K], [circ(91, 5.5, 4), 1.2, K],
+      [BIRD, 1.1, K], [BEAK, 0.9, K], [BUCKET, 1.6, K],
+      ['M166 98 L167 136 M174 98 L173 136', 0.6, '#9ca3af'],
+      [circ(162, 94, 5), 1.1, K], [circ(170, 90, 5), 1.1, K], [circ(178, 94, 5), 1.1, K],
+      [circ(170, 28, 12), 1.2, '#92400e'], [HEART, 1.4, '#9f1239'],
+      [star(24, 86, 9), 1.2, '#92400e'], [star(178, 80, 7), 1.2, '#92400e']
+    ].map(([d, w, c]) => ({ ...P(d), w, c })),
+    fill: [
+      ['M0 136 C40 128 80 140 120 134 C160 128 180 136 200 132 V150 H0Z', '#eaf4ff'],
+      [circ(170, 28, 12), '#fef9c3'], [HEART, '#fb7185'],
+      [star(24, 86, 9), '#fde047'], [star(178, 80, 7), '#fde047'],
+      [ROOF, '#ef4444'], [BODY, '#dc2626'], [DOOR, '#1c0a0a'], [BUCKET, '#fff'],
+      ['M164 98 L170 98 L170.5 136 L165.5 136Z', '#ef4444'],
+      ['M175 98 L182 98 L178 136 L175.5 136Z', '#ef4444'],
+      [circ(162, 94, 5), '#fef08a'], [circ(170, 90, 5), '#fef08a'], [circ(178, 94, 5), '#fef08a'],
+      [SB, '#fff'], [FOOT, '#fff'], [TAIL, '#fff'], [HEAD, '#fff'], [EAR, K], [NOSE, K],
+      [circ(74, 23, 1.8), K], [HAT, '#dc2626'], [BRIM, '#fff'], [circ(91, 5.5, 4), '#fff'],
+      [BIRD, '#facc15'], [BEAK, '#f97316']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 })),
+    sh: [
+      ['M50 76 H150 V86 H50Z', 'rgba(0,0,0,.35)'],
+      ['M128 86 H150 V136 H128Z', 'rgba(0,0,0,.18)'],
+      ['M92 38 C110 46 130 46 142 40 L141 44 C124 50 104 49 92 41Z', 'rgba(30,41,59,.3)'],
+      ['M92 24 C104 22 120 21 132 25 C120 25 104 26 92 29Z', 'rgba(255,255,255,.25)'],
+      ['M40 74 L99 39 L99 41 L44 74Z', 'rgba(255,255,255,.35)'],
+      ['M0 134 C40 126 80 138 120 132 C160 126 180 134 200 130 V132 C180 138 160 130 120 136Z', 'rgba(148,163,184,.4)']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 }))
+  };
+})();
 
-// Estados: 'drawing' -> 'choosing' -> 'user' | 'auto'
-let mode='drawing',tDraw=performance.now(),tAuto=0,autoFin=false;
-let curColor='#ef4444',curSize=7,strokes=[],curStroke=null,fit={s:1,ox:0,oy:0};
+// --- PÁGINA 2: Snoopy Aviador en las Nubes ---
+const P2 = (() => {
+  const ROOF = 'M48 92 L100 58 L152 92 Z',
+        BODY = 'M60 92 V136 H140 V92 Z',
+        DOOR = 'M86 136 V118 C86 105 114 105 114 118 V136 Z',
+        CLOUD_L = 'M10 126 C8 115 22 110 30 116 C36 108 52 108 58 116 C68 114 74 122 70 130 C64 136 16 136 10 126Z',
+        CLOUD_R = 'M126 128 C124 118 138 112 146 118 C154 110 170 110 176 118 C186 116 194 124 188 132 C182 138 132 138 126 128Z',
+        CLOUD_TOP = 'M134 36 C132 28 144 24 150 29 C156 22 168 23 172 30 C180 29 185 35 180 41 C174 46 138 45 134 36Z',
+        HEAD = 'M92 38 C100 32 114 35 116 44 C117 52 108 57 98 56 C88 57 74 55 71 49 C69 43 78 39 85 41 C88 40 90 39 92 38Z',
+        HELMET = 'M90 38 C98 31 114 33 117 44 C118 50 114 55 110 56 C109 48 103 42 93 41 C91 40 90 39 90 38Z',
+        GOGGLES = 'M82 37 C82 33 93 33 93 37 C93 41 82 41 82 37Z',
+        EAR_FLY = 'M112 45 C124 41 136 45 134 52 C131 57 118 54 112 49Z',
+        NOSE = circ(71, 46, 4.4),
+        SCARF_NECK = 'M98 55 C106 54 114 56 114 60 C106 62 98 60 98 55Z',
+        SCARF_TAIL1 = 'M113 56 C126 52 142 54 152 50 L150 56 C138 60 124 59 113 59Z',
+        SCARF_TAIL2 = 'M113 59 C125 60 138 64 148 63 L145 68 C134 69 122 64 112 61Z',
+        PAWS = 'M82 58 C78 55 74 58 78 62 C82 64 87 62 87 59Z',
+        BIRD = circ(62, 50, 4.5),
+        BIRD_GOG = circ(59, 49, 2),
+        BEAK = 'M57.5 49.5 L53 51 L57.5 52Z',
+        MOON = 'M30 20 C22 22 20 34 28 38 C20 38 14 30 18 22 C20 18 26 17 30 20Z';
 
-const COLORS=['#ef4444','#fb7185','#f97316','#facc15','#fef08a','#4ade80','#38bdf8','#1e3a8a','#c084fc','#ffffff','#111827','eraser'];
-const palEl=document.getElementById('pal');
-COLORS.forEach((c,i)=>{
-  const b=document.createElement('button');
-  b.className='sw'+(i===0?' act':'');
-  if(c==='eraser'){b.textContent='🧽';b.style.cssText='background:#374151;display:grid;place-items:center;font-size:13px;padding:0';b.title='Borrador'}
-  else b.style.background=c;
-  b.onclick=()=>{document.querySelectorAll('.sw').forEach(x=>x.classList.remove('act'));b.classList.add('act');curColor=c};
+  return {
+    title: 'Snoopy Aviador',
+    sky: ['#1e3a8a', '#7dd3fc'],
+    particles: 'stars',
+    sk: [
+      'M48 92 L100 58 L152 92', 'M60 92 V136 H140 V92',
+      'M12 126 Q40 106 68 128', 'M128 128 Q156 108 186 130',
+      circ(102, 46, 13), 'M68 48 a16 8 0 1 0 32 0 a16 8 0 1 0 -32 0',
+      'M110 46 Q130 42 135 50', 'M112 58 Q135 54 152 52',
+      'M112 60 Q132 64 148 65', circ(24, 28, 10), circ(62, 50, 5)
+    ].map(P),
+    ink: [
+      [CLOUD_L, 1.5, K], [CLOUD_R, 1.5, K], [CLOUD_TOP, 1.3, K],
+      [ROOF, 2.1, K], [BODY, 1.9, K], [DOOR, 1.7, K],
+      ['M60 106 H140 M60 120 H140', 0.6, '#7f1d1d'],
+      [HEAD, 1.8, K], [HELMET, 1.7, K], [GOGGLES, 1.4, K], [circ(87.5, 37, 2.2), 1, K],
+      [EAR_FLY, 1.6, K], [NOSE, 1.2, K], [circ(94, 44, 1.7), 1, K],
+      ['M76 51 Q84 55 91 52', 1.1, K], [PAWS, 1.5, K],
+      [SCARF_NECK, 1.5, K], [SCARF_TAIL1, 1.5, K], [SCARF_TAIL2, 1.5, K],
+      [BIRD, 1.1, K], [BIRD_GOG, 0.9, K], [BEAK, 0.9, K],
+      [MOON, 1.3, '#92400e'], [star(46, 22, 6), 1.1, '#92400e'],
+      [star(172, 66, 7), 1.1, '#92400e'], [heart(164, 92, 0.8), 1.2, '#9f1239']
+    ].map(([d, w, c]) => ({ ...P(d), w, c })),
+    fill: [
+      [MOON, '#fef08a'], [star(46, 22, 6), '#fde047'], [star(172, 66, 7), '#fde047'],
+      [heart(164, 92, 0.8), '#fb7185'],
+      [CLOUD_TOP, '#ffffff'], [ROOF, '#ef4444'], [BODY, '#dc2626'], [DOOR, '#1c0a0a'],
+      [CLOUD_L, '#f8fafc'], [CLOUD_R, '#f8fafc'],
+      [HEAD, '#ffffff'], [HELMET, '#92400e'], [GOGGLES, '#38bdf8'],
+      [EAR_FLY, K], [NOSE, K], [circ(94, 44, 1.7), K], [PAWS, '#ffffff'],
+      [SCARF_NECK, '#ef4444'], [SCARF_TAIL1, '#ef4444'], [SCARF_TAIL2, '#dc2626'],
+      [BIRD, '#facc15'], [BIRD_GOG, '#e0f2fe'], [BEAK, '#f97316']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 })),
+    sh: [
+      ['M60 92 H140 V100 H60Z', 'rgba(0,0,0,.3)'],
+      ['M14 127 C34 134 54 134 68 128 C54 131 32 131 14 127Z', 'rgba(148,163,184,.45)'],
+      ['M130 129 C150 136 170 136 186 130 C170 133 148 133 130 129Z', 'rgba(148,163,184,.45)'],
+      ['M93 38 C100 34 108 35 112 39 C106 38 99 38 93 38Z', 'rgba(255,255,255,.3)']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 }))
+  };
+})();
+
+// --- PÁGINA 3: Snoopy y Woodstock en Picnic de Flores ---
+const P3 = (() => {
+  const HILL1 = 'M0 112 Q60 96 130 114 T200 108 V150 H0 Z',
+        HILL2 = 'M0 124 Q90 110 200 124 V150 H0 Z',
+        BLANKET = 'M42 122 L86 106 L156 116 L124 138 Z',
+        SUN = circ(172, 26, 13),
+        SBODY = 'M76 106 C84 96 112 96 122 104 C128 109 124 116 112 117 C98 118 82 116 76 112 C74 110 74 108 76 106Z',
+        SHEAD = 'M64 94 C72 88 84 92 85 101 C85 109 76 112 68 110 C60 111 48 109 46 103 C44 97 52 94 58 96 C60 95 62 94 64 94Z',
+        SEAR = 'M74 98 C83 96 87 107 83 117 C79 121 74 117 73 110 C72 104 72 100 74 98Z',
+        SNOSE = circ(46.5, 101, 4.2),
+        SFOOT = 'M116 113 C120 106 132 107 134 113 C135 117 119 118 116 113Z',
+        BASKET = 'M132 104 H150 L147 117 H135 Z',
+        HANDLE = 'M134 104 C134 94 148 94 148 104',
+        BIRD = circ(104, 92, 4.6),
+        BEAK = 'M99.5 91.5 L95 93 L99.5 94.5Z',
+        FLOWER1 = (cx, cy) => [
+          `M${cx} ${cy + 3} V${cy + 13}`,
+          circ(cx - 3.5, cy, 2.8), circ(cx + 3.5, cy, 2.8),
+          circ(cx, cy - 3.5, 2.8), circ(cx, cy + 3.5, 2.8),
+          circ(cx, cy, 2.4)
+        ],
+        BFLY = 'M42 62 C36 55 32 63 39 66 C34 70 39 75 43 68 C47 75 52 70 47 66 C54 63 50 55 44 62Z';
+
+  const f1 = FLOWER1(24, 114);
+  const f2 = FLOWER1(174, 116);
+
+  return {
+    title: 'Picnic de Flores',
+    sky: ['#38bdf8', '#bae6fd'],
+    particles: 'petals',
+    sk: [
+      'M0 112 Q80 96 200 108', 'M42 122 L86 106 L156 116 L124 138 Z',
+      'M74 108 a26 11 0 1 0 52 0 a26 11 0 1 0 -52 0',
+      circ(74, 100, 11), 'M42 102 a13 6 0 1 0 26 0 a13 6 0 1 0 -26 0',
+      SUN, 'M132 104 H150 L147 117 H135 Z', 'M32 64 Q44 54 54 64'
+    ].map(P),
+    ink: [
+      ['M0 112 Q60 96 130 114 T200 108', 1.3, '#15803d'],
+      ['M0 124 Q90 110 200 124', 1.1, '#166534'],
+      [BLANKET, 1.6, K],
+      ['M64 114 L106 109 M82 129 L138 113 M62 114 L92 130 M98 108 L134 126', 0.7, '#991b1b'],
+      [BASKET, 1.5, K], [HANDLE, 1.4, K],
+      [SBODY, 1.7, K], [SFOOT, 1.5, K], [SHEAD, 1.8, K], [SEAR, 1.6, K], [SNOSE, 1.2, K],
+      [circ(68, 98, 1.6), 1, K], ['M52 105 Q59 109 66 106', 1.1, K],
+      ['M84 103 C86 107 86 111 84 113', 2.2, '#ef4444'],
+      [BIRD, 1.1, K], [BEAK, 0.9, K],
+      [SUN, 1.4, '#b45309'],
+      ['M152 26 H144 M172 6 V13 M158 12 L152 7 M186 12 L191 7 M158 40 L152 45', 1.3, '#d97706'],
+      [BFLY, 1.2, K], [heart(98, 66, 0.9), 1.3, '#be123c'],
+      ...f1.map((d, idx) => [d, idx === 0 ? 1.3 : 1, idx === 0 ? '#15803d' : K]),
+      ...f2.map((d, idx) => [d, idx === 0 ? 1.3 : 1, idx === 0 ? '#15803d' : K])
+    ].map(([d, w, c]) => ({ ...P(d), w, c })),
+    fill: [
+      [HILL1, '#86efac'], [HILL2, '#4ade80'],
+      [SUN, '#fde047'], [BFLY, '#f472b6'], [heart(98, 66, 0.9), '#fb7185'],
+      [BLANKET, '#fca5a5'],
+      ['M64 114 L86 106 L106 109 L82 129 Z', '#ef4444'],
+      ['M106 109 L156 116 L138 126 L98 118 Z', '#ef4444'],
+      [BASKET, '#d97706'],
+      [SBODY, '#ffffff'], [SFOOT, '#ffffff'], [SHEAD, '#ffffff'], [SEAR, K], [SNOSE, K],
+      [circ(68, 98, 1.6), K],
+      [BIRD, '#facc15'], [BEAK, '#f97316'],
+      [f1[1], '#fb7185'], [f1[2], '#fb7185'], [f1[3], '#fb7185'], [f1[4], '#fb7185'], [f1[5], '#facc15'],
+      [f2[1], '#c084fc'], [f2[2], '#c084fc'], [f2[3], '#c084fc'], [f2[4], '#c084fc'], [f2[5], '#facc15']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 })),
+    sh: [
+      ['M76 113 C92 118 112 118 126 114 L122 119 C104 123 86 122 76 113Z', 'rgba(20,83,45,.28)'],
+      ['M0 124 Q90 110 200 124 V128 Q90 114 0 128 Z', 'rgba(22,101,52,.22)'],
+      [circ(172, 26, 10), 'rgba(255,255,255,.35)']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 }))
+  };
+})();
+
+// --- PÁGINA 4: Snoopy Astronauta en la Luna ---
+const P4 = (() => {
+  const MOON_GND = 'M0 122 Q100 104 200 122 V150 H0 Z',
+        CRATER1 = 'M22 132 a14 5 0 1 0 28 0 a14 5 0 1 0 -28 0',
+        CRATER2 = 'M144 130 a18 6 0 1 0 36 0 a18 6 0 1 0 -36 0',
+        CRATER3 = 'M88 138 a10 3.5 0 1 0 20 0 a10 3.5 0 1 0 -20 0',
+        EARTH = circ(34, 34, 15),
+        SATURN = circ(166, 30, 8),
+        RING = 'M150 32 C150 27 182 25 182 30 C182 35 150 37 150 32Z',
+        SUIT = 'M86 68 C80 76 80 94 86 100 H108 C114 94 114 76 108 68 Z',
+        BACKPACK = 'M108 70 H117 C120 70 120 92 117 92 H108 Z',
+        ARM_L = 'M85 73 C76 76 74 84 80 87 C84 89 87 84 87 80',
+        ARM_R = 'M109 73 C118 70 124 74 122 79 C120 82 114 80 111 78',
+        LEG_L = 'M87 100 V113 H81 C78 113 78 118 82 118 H94 V100 Z',
+        LEG_R = 'M101 100 V113 H97 C94 113 94 118 98 118 H110 V100 Z',
+        HELMET = circ(94, 52, 19),
+        SHEAD = 'M93 42 C100 38 108 42 108 50 C108 56 101 58 95 57 C88 58 79 56 78 51 C77 46 83 44 88 45 C90 44 91 43 93 42Z',
+        SEAR = 'M99 47 C106 46 109 54 106 62 C103 65 99 62 98 56 C97 52 98 49 99 47Z',
+        SNOSE = circ(78.5, 50, 3.2),
+        POLE = 'M132 54 V116',
+        FLAG = 'M132 56 H162 V76 H132 Z',
+        FHEART = heart(147, 64, 0.75);
+
+  return {
+    title: 'Snoopy Astronauta',
+    sky: ['#090d16', '#1e1b4b'],
+    particles: 'stars',
+    sk: [
+      'M0 122 Q100 104 200 122', CRATER1, CRATER2,
+      EARTH, SATURN, 'M148 32 Q166 26 184 30',
+      HELMET, 'M84 68 H110 V100 H84 Z', 'M86 100 V118 M104 100 V118',
+      'M132 54 V116', 'M132 56 H162 V76 H132 Z'
+    ].map(P),
+    ink: [
+      ['M0 122 Q100 104 200 122', 1.5, '#475569'],
+      [CRATER1, 1.1, '#64748b'], [CRATER2, 1.1, '#64748b'], [CRATER3, 1, '#64748b'],
+      [EARTH, 1.4, '#1e3a8a'],
+      ['M25 26 C30 24 35 28 32 34 C29 38 23 36 25 26Z', 1, '#15803d'],
+      ['M38 30 C43 29 46 35 42 40 C38 42 36 35 38 30Z', 1, '#15803d'],
+      [SATURN, 1.3, '#92400e'], [RING, 1.2, '#b45309'],
+      [POLE, 1.8, '#cbd5e1'], [FLAG, 1.5, K], [FHEART, 1.2, '#be1239'],
+      [BACKPACK, 1.6, K], [SUIT, 1.8, K], [ARM_L, 1.6, K], [ARM_R, 1.6, K],
+      [LEG_L, 1.6, K], [LEG_R, 1.6, K],
+      ['M91 76 H103 V85 H91 Z', 1.1, K],
+      [SHEAD, 1.6, K], [SEAR, 1.4, K], [SNOSE, 1.1, K],
+      [circ(94, 48, 1.4), 1, K], ['M83 54 Q88 57 93 54', 1, K],
+      [HELMET, 1.8, '#38bdf8'],
+      ['M81 42 C85 37 92 35 98 36', 1.2, '#e0f2fe'],
+      [star(66, 22, 6), 1.1, '#fde047'], [star(122, 24, 5), 1.1, '#fde047'],
+      [star(18, 74, 5.5), 1.1, '#fde047']
+    ].map(([d, w, c]) => ({ ...P(d), w, c })),
+    fill: [
+      [EARTH, '#3b82f6'],
+      ['M25 26 C30 24 35 28 32 34 C29 38 23 36 25 26Z', '#4ade80'],
+      ['M38 30 C43 29 46 35 42 40 C38 42 36 35 38 30Z', '#4ade80'],
+      [SATURN, '#fbbf24'], [star(66, 22, 6), '#fef08a'],
+      [star(122, 24, 5), '#fef08a'], [star(18, 74, 5.5), '#fef08a'],
+      [MOON_GND, '#e2e8f0'], [CRATER1, '#cbd5e1'], [CRATER2, '#cbd5e1'], [CRATER3, '#cbd5e1'],
+      [FLAG, '#ffffff'], [FHEART, '#f43f5e'],
+      [BACKPACK, '#cbd5e1'], [SUIT, '#ffffff'], [ARM_L, '#ffffff'], [ARM_R, '#ffffff'],
+      [LEG_L, '#ffffff'], [LEG_R, '#ffffff'],
+      ['M91 76 H103 V85 H91 Z', '#38bdf8'],
+      ['M88 68 H106 V71 H88 Z', '#ef4444'],
+      [SHEAD, '#ffffff'], [SEAR, K], [SNOSE, K], [circ(94, 48, 1.4), K]
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 })),
+    sh: [
+      [HELMET, 'rgba(56,189,248,.16)'],
+      ['M81 42 C85 37 92 35 98 36 C92 38 86 40 81 42Z', 'rgba(255,255,255,.55)'],
+      ['M0 132 Q100 116 200 132 V150 H0 Z', 'rgba(100,116,139,.25)'],
+      ['M80 118 H112 V121 H80 Z', 'rgba(15,23,42,.35)']
+    ].map(([d, c]) => ({ ...P(d), c, len: 1 }))
+  };
+})();
+
+const PAGES = [P1, P2, P3, P4];
+
+// ============================================================================
+// ESTADO GLOBAL DEL LIBRO Y HERRAMIENTAS DE DIBUJO
+// ============================================================================
+let pageIdx = 0;
+// Almacena los trazos manuales independientes para cada página
+const pageStrokes = PAGES.map(() => []);
+
+// Lienzo oculto de alta resolución para la capa de pintura manual
+const SCALE = 4;
+const paint = document.createElement('canvas');
+paint.width = W * SCALE;
+paint.height = H * SCALE;
+const pctx = paint.getContext('2d');
+pctx.scale(SCALE, SCALE);
+pctx.lineCap = pctx.lineJoin = 'round';
+
+// Modos: 'drawing' -> 'choosing' -> 'user' | 'auto'
+let mode = 'drawing';
+let tDraw = performance.now();
+let tAuto = 0;
+let autoFin = false;
+
+let curTool = 'brush'; // 'brush' | 'crayon' | 'chalk' | 'ink' | 'pencil' | 'eraser'
+let curColor = '#ef4444';
+let curSize = 7;
+let curStroke = null;
+let fit = { s: 1, ox: 0, oy: 0 };
+
+// ============================================================================
+// PALETA DE COLORES Y SELECTORES
+// ============================================================================
+const COLORS = [
+  '#ef4444', '#fb7185', '#f97316', '#facc15', '#fef08a',
+  '#4ade80', '#16a34a', '#38bdf8', '#1e3a8a', '#c084fc',
+  '#92400e', '#ffffff', '#111827'
+];
+const palEl = document.getElementById('pal');
+COLORS.forEach((c, i) => {
+  const b = document.createElement('button');
+  b.className = 'sw' + (i === 0 ? ' act' : '');
+  b.style.background = c;
+  b.title = c;
+  b.onclick = () => {
+    document.querySelectorAll('.sw').forEach(x => x.classList.remove('act'));
+    b.classList.add('act');
+    curColor = c;
+    // Si estaba en borrador, regresar automáticamente a pincel al elegir color
+    if (curTool === 'eraser') selectTool('brush');
+  };
   palEl.appendChild(b);
 });
 
-document.querySelectorAll('.sz').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('.sz').forEach(x=>x.classList.remove('act'));b.classList.add('act');curSize=+b.dataset.r;
+function selectTool(toolName) {
+  curTool = toolName;
+  document.querySelectorAll('.br-btn').forEach(b => {
+    b.classList.toggle('act', b.dataset.tool === toolName);
+  });
+}
+
+document.querySelectorAll('.br-btn').forEach(b => {
+  b.onclick = () => selectTool(b.dataset.tool);
 });
 
-function redrawPaint(){
-  pctx.save();pctx.setTransform(1,0,0,1,0,0);pctx.clearRect(0,0,paint.width,paint.height);pctx.restore();
-  for(const s of strokes){
-    pctx.save();
-    pctx.globalCompositeOperation=s.c==='eraser'?'destination-out':'source-over';
-    pctx.strokeStyle=s.c==='eraser'?'#000':s.c;
-    pctx.fillStyle=pctx.strokeStyle;
-    pctx.lineWidth=s.r;
-    if(s.pts.length===1){pctx.beginPath();pctx.arc(s.pts[0].x,s.pts[0].y,s.r/2,0,Math.PI*2);pctx.fill()}
-    else{pctx.beginPath();pctx.moveTo(s.pts[0].x,s.pts[0].y);for(let i=1;i<s.pts.length;i++)pctx.lineTo(s.pts[i].x,s.pts[i].y);pctx.stroke()}
+document.querySelectorAll('.sz').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('.sz').forEach(x => x.classList.remove('act'));
+    b.classList.add('act');
+    curSize = +b.dataset.r;
+  };
+});
+
+// ============================================================================
+// MOTOR DE TEXTURAS DE PINCELES (ACUARELA, CRAYOLA, GIS, TINTA, LÁPIZ, BORRADOR)
+// ============================================================================
+function hash2d(x, y, seed) {
+  const n = Math.sin(x * 12.9898 + y * 78.233 + seed * 37.719) * 43758.5453;
+  return n - Math.floor(n);
+}
+
+function renderStroke(s) {
+  if (!s.pts.length) return;
+  pctx.save();
+
+  if (s.tool === 'eraser') {
+    pctx.globalCompositeOperation = 'destination-out';
+    pctx.strokeStyle = '#000';
+    pctx.fillStyle = '#000';
+    pctx.lineWidth = s.r * 1.25;
+    drawSmoothPath(s.pts, s.r * 1.25);
     pctx.restore();
+    return;
+  }
+
+  pctx.globalCompositeOperation = 'source-over';
+  pctx.strokeStyle = s.c;
+  pctx.fillStyle = s.c;
+
+  if (s.tool === 'ink') {
+    // Tinta / Marcador: trazo sólido, opaco y muy nítido
+    pctx.globalAlpha = 1;
+    pctx.lineWidth = s.r;
+    drawSmoothPath(s.pts, s.r);
+  } else if (s.tool === 'brush') {
+    // Pincel / Acuarela: suave y translúcido con halo ligero
+    pctx.globalAlpha = 0.55;
+    pctx.shadowColor = s.c;
+    pctx.shadowBlur = s.r * 0.25;
+    pctx.lineWidth = s.r;
+    drawSmoothPath(s.pts, s.r);
+  } else if (s.tool === 'pencil') {
+    // Lápiz de color: fino, textura rayada y grafito suave
+    pctx.globalAlpha = 0.65;
+    const w = Math.max(0.8, s.r * 0.35);
+    pctx.lineWidth = w;
+    drawSmoothPath(s.pts, w);
+    // Segunda pasada ligeramente desplazada para simular veta de lápiz
+    pctx.globalAlpha = 0.3;
+    pctx.translate(0.35, -0.35);
+    drawSmoothPath(s.pts, w * 0.8);
+  } else if (s.tool === 'crayon') {
+    // Crayola: núcleo ceroso + granos irregulares alrededor
+    pctx.globalAlpha = 0.78;
+    pctx.lineWidth = s.r * 0.85;
+    drawSmoothPath(s.pts, s.r * 0.85);
+
+    // Motas granuladas deterministas a lo largo del recorrido
+    const step = Math.max(0.8, s.r * 0.25);
+    const radius = s.r * 0.55;
+    for (let i = 0; i < s.pts.length; i++) {
+      const p0 = s.pts[i];
+      const p1 = s.pts[Math.min(i + 1, s.pts.length - 1)];
+      const dist = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+      const count = Math.max(1, Math.ceil(dist / step));
+      for (let k = 0; k < count; k++) {
+        const t = k / count;
+        const cx = p0.x + (p1.x - p0.x) * t;
+        const cy = p0.y + (p1.y - p0.y) * t;
+        for (let g = 0; g < 6; g++) {
+          const r1 = hash2d(cx, cy, g + 1);
+          const r2 = hash2d(cy, cx, g + 11);
+          const ang = r1 * Math.PI * 2;
+          const rad = Math.sqrt(r2) * radius;
+          const gx = cx + Math.cos(ang) * rad;
+          const gy = cy + Math.sin(ang) * rad;
+          pctx.globalAlpha = 0.45 + r1 * 0.45;
+          pctx.fillRect(gx, gy, 0.55, 0.55);
+        }
+      }
+    }
+  } else if (s.tool === 'chalk') {
+    // Gis / Tiza: textura polvorienta y porosa
+    const step = Math.max(0.6, s.r * 0.2);
+    const radius = s.r * 0.65;
+    for (let i = 0; i < s.pts.length; i++) {
+      const p0 = s.pts[i];
+      const p1 = s.pts[Math.min(i + 1, s.pts.length - 1)];
+      const dist = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+      const count = Math.max(1, Math.ceil(dist / step));
+      for (let k = 0; k < count; k++) {
+        const t = k / count;
+        const cx = p0.x + (p1.x - p0.x) * t;
+        const cy = p0.y + (p1.y - p0.y) * t;
+        for (let g = 0; g < 12; g++) {
+          const r1 = hash2d(cx, cy, g * 3 + 2);
+          const r2 = hash2d(cy, cx, g * 5 + 7);
+          const ang = r1 * Math.PI * 2;
+          const rad = Math.sqrt(r2) * radius;
+          const gx = cx + Math.cos(ang) * rad;
+          const gy = cy + Math.sin(ang) * rad;
+          pctx.globalAlpha = 0.14 + r1 * 0.22;
+          pctx.beginPath();
+          pctx.arc(gx, gy, 0.35 + r2 * 0.45, 0, Math.PI * 2);
+          pctx.fill();
+        }
+      }
+    }
+  }
+
+  pctx.restore();
+}
+
+function drawSmoothPath(pts, width) {
+  if (pts.length === 1) {
+    pctx.beginPath();
+    pctx.arc(pts[0].x, pts[0].y, width / 2, 0, Math.PI * 2);
+    pctx.fill();
+  } else {
+    pctx.beginPath();
+    pctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      pctx.lineTo(pts[i].x, pts[i].y);
+    }
+    pctx.stroke();
   }
 }
 
-function getPt(e){
-  const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;
-  return{x:((e.clientX-r.left)*d-fit.ox)/fit.s,y:((e.clientY-r.top)*d-fit.oy)/fit.s};
+function redrawPaint() {
+  pctx.save();
+  pctx.setTransform(1, 0, 0, 1, 0, 0);
+  pctx.clearRect(0, 0, paint.width, paint.height);
+  pctx.restore();
+  for (const s of pageStrokes[pageIdx]) {
+    renderStroke(s);
+  }
 }
 
-cv.addEventListener('pointerdown',e=>{
-  if(mode!=='user')return;
-  const pt=getPt(e);if(pt.x<0||pt.x>W||pt.y<0||pt.y>H)return;
+// ============================================================================
+// INTERACCIÓN TÁCTIL Y CON RATÓN EN EL LIENZO
+// ============================================================================
+function getPt(e) {
+  const r = cv.getBoundingClientRect();
+  const d = devicePixelRatio || 1;
+  return {
+    x: ((e.clientX - r.left) * d - fit.ox) / fit.s,
+    y: ((e.clientY - r.top) * d - fit.oy) / fit.s
+  };
+}
+
+cv.addEventListener('pointerdown', e => {
+  if (mode !== 'user') return;
+  const pt = getPt(e);
+  if (pt.x < 0 || pt.x > W || pt.y < 0 || pt.y > H) return;
   cv.setPointerCapture(e.pointerId);
-  curStroke={c:curColor,r:curSize,pts:[pt]};
-  strokes.push(curStroke);
+  curStroke = { tool: curTool, c: curColor, r: curSize, pts: [pt] };
+  pageStrokes[pageIdx].push(curStroke);
   redrawPaint();
 });
-cv.addEventListener('pointermove',e=>{
-  if(!curStroke)return;
+
+cv.addEventListener('pointermove', e => {
+  if (!curStroke) return;
   curStroke.pts.push(getPt(e));
   redrawPaint();
 });
-const endStroke=()=>{curStroke=null};
-cv.addEventListener('pointerup',endStroke);
-cv.addEventListener('pointercancel',endStroke);
 
-function setMode(m){
-  mode=m;
-  document.getElementById('choice').style.display=m==='choosing'?'flex':'none';
-  document.getElementById('tools').style.display=m==='user'?'flex':'none';
-  document.getElementById('autoControls').style.display='none';
-  cv.style.cursor=m==='user'?'crosshair':'default';
-  if(m==='auto'){tAuto=performance.now();autoFin=false}
-  if(m==='drawing'){tDraw=performance.now()}
+const endStroke = () => { curStroke = null; };
+cv.addEventListener('pointerup', endStroke);
+cv.addEventListener('pointercancel', endStroke);
+
+// ============================================================================
+// CONTROL DE MODOS, PÁGINAS Y BOTÓN SALTAR ANIMACIÓN
+// ============================================================================
+const D_DRAW = [5.5, 9.5];
+const D_AUTO = [7.5, 4.5];
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('choice').style.display = m === 'choosing' ? 'flex' : 'none';
+  document.getElementById('tools').style.display = m === 'user' ? 'flex' : 'none';
+  document.getElementById('autoControls').style.display = 'none';
+
+  // Mostrar botón de saltar durante dibujo o durante autocoloreado
+  const showSkip = m === 'drawing' || (m === 'auto' && !autoFin);
+  document.getElementById('animControls').style.display = showSkip ? 'flex' : 'none';
+
+  cv.style.cursor = m === 'user' ? 'crosshair' : 'default';
+
+  if (m === 'auto') {
+    tAuto = performance.now();
+    autoFin = false;
+    document.getElementById('animControls').style.display = 'flex';
+  }
+  if (m === 'drawing') {
+    tDraw = performance.now();
+  }
   resize();
 }
 
-document.getElementById('chooseUser').onclick=()=>setMode('user');
-document.getElementById('chooseAuto').onclick=()=>setMode('auto');
-document.getElementById('switchAuto').onclick=()=>setMode('auto');
-document.getElementById('switchUser').onclick=()=>setMode('user');
-document.getElementById('undo').onclick=()=>{strokes.pop();redrawPaint()};
-document.getElementById('clear').onclick=()=>{strokes=[];redrawPaint()};
-document.getElementById('replay1').onclick=()=>setMode('drawing');
-document.getElementById('replay2').onclick=()=>setMode('drawing');
+function loadPage(newIdx) {
+  if (newIdx < 0 || newIdx >= PAGES.length) return;
+  pageIdx = newIdx;
+  curStroke = null;
+  document.getElementById('pageNum').textContent = `Página ${pageIdx + 1} de ${PAGES.length}`;
+  document.getElementById('pageTitle').textContent = PAGES[pageIdx].title;
+  document.getElementById('prevPage').disabled = pageIdx === 0;
+  document.getElementById('nextPage').disabled = pageIdx === PAGES.length - 1;
+  redrawPaint();
+  setMode('drawing');
+}
 
-document.getElementById('save').onclick=()=>{
-  const out=document.createElement('canvas');out.width=W*SCALE;out.height=H*SCALE;
-  const octx=out.getContext('2d');
-  octx.fillStyle='#f7f1e3';octx.fillRect(0,0,out.width,out.height);
-  octx.drawImage(paint,0,0);
-  octx.scale(SCALE,SCALE);
-  INK.forEach(it=>{octx.strokeStyle=it.c;octx.lineWidth=it.w;octx.lineCap=octx.lineJoin='round';octx.stroke(it.p)});
-  const a=document.createElement('a');a.download='snoopy-vany.png';a.href=out.toDataURL('image/png');a.click();
+document.getElementById('prevPage').onclick = () => loadPage(pageIdx - 1);
+document.getElementById('nextPage').onclick = () => loadPage(pageIdx + 1);
+
+// Botón "Saltar animación" inteligente según la fase actual
+document.getElementById('skipAnim').onclick = () => {
+  if (mode === 'drawing') {
+    // Adelanta el reloj de dibujo al final y pasa a elección
+    tDraw = performance.now() - (D_DRAW[0] + D_DRAW[1] + 1) * 1000;
+    setMode('choosing');
+  } else if (mode === 'auto') {
+    // Adelanta el reloj de autocoloreado al final
+    tAuto = performance.now() - (D_AUTO[0] + D_AUTO[1] + 1) * 1000;
+  }
 };
 
-const D_DRAW=[6,10],D_AUTO=[8,5];
-function resize(){const d=devicePixelRatio||1,b=cv.getBoundingClientRect();cv.width=b.width*d;cv.height=b.height*d;const s=Math.min(cv.width/(W+16),cv.height/(H+16));fit={s,ox:(cv.width-W*s)/2,oy:(cv.height-H*s)/2}}
-function seq(a,sp){const tot=a.reduce((x,i)=>x+i.len,0);let c=0;return a.map(i=>{const u=cl((sp*tot-c)/i.len);c+=i.len;return u})}
-function line(it,u,w,col,al){if(u<=0)return;ctx.save();ctx.globalAlpha=al;ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineCap=ctx.lineJoin='round';ctx.setLineDash(u>=1?[]:[it.len,it.len+2]);ctx.lineDashOffset=it.len*(1-u);ctx.stroke(it.p);ctx.restore()}
-function wipe(it,u,col){if(u<=0)return;ctx.save();ctx.beginPath();ctx.rect(0,0,W*u,H);ctx.clip();ctx.fillStyle=col;ctx.fill(it.p);ctx.restore()}
+document.getElementById('chooseUser').onclick = () => setMode('user');
+document.getElementById('chooseAuto').onclick = () => setMode('auto');
+document.getElementById('switchAuto').onclick = () => setMode('auto');
+document.getElementById('switchUser').onclick = () => setMode('user');
+document.getElementById('undo').onclick = () => { pageStrokes[pageIdx].pop(); redrawPaint(); };
+document.getElementById('clear').onclick = () => { pageStrokes[pageIdx] = []; redrawPaint(); };
+document.getElementById('replay1').onclick = () => setMode('drawing');
+document.getElementById('replay2').onclick = () => setMode('drawing');
 
-function frame(now){
+function exportCurrentPage() {
+  const page = PAGES[pageIdx];
+  const out = document.createElement('canvas');
+  out.width = W * SCALE;
+  out.height = H * SCALE;
+  const octx = out.getContext('2d');
+
+  // Fondo papel
+  octx.fillStyle = '#f7f1e3';
+  octx.fillRect(0, 0, out.width, out.height);
+
+  if (mode === 'auto') {
+    octx.save();
+    octx.scale(SCALE, SCALE);
+    const g = octx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, page.sky[0]);
+    g.addColorStop(1, page.sky[1]);
+    octx.fillStyle = g;
+    octx.fillRect(0, 0, W, H);
+    page.fill.forEach(it => { octx.fillStyle = it.c; octx.fill(it.p); });
+    page.ink.forEach(it => {
+      octx.strokeStyle = it.c; octx.lineWidth = it.w;
+      octx.lineCap = octx.lineJoin = 'round'; octx.stroke(it.p);
+    });
+    page.sh.forEach(it => { octx.fillStyle = it.c; octx.fill(it.p); });
+    octx.restore();
+  } else {
+    octx.drawImage(paint, 0, 0);
+    octx.save();
+    octx.scale(SCALE, SCALE);
+    page.ink.forEach(it => {
+      octx.strokeStyle = it.c; octx.lineWidth = it.w;
+      octx.lineCap = octx.lineJoin = 'round'; octx.stroke(it.p);
+    });
+    octx.restore();
+  }
+
+  const a = document.createElement('a');
+  a.download = `snoopy-pag${pageIdx + 1}-vany.png`;
+  a.href = out.toDataURL('image/png');
+  a.click();
+}
+
+document.getElementById('save').onclick = exportCurrentPage;
+document.getElementById('saveAuto').onclick = exportCurrentPage;
+
+// ============================================================================
+// RENDERIZADO PRINCIPAL Y ANIMACIONES
+// ============================================================================
+function resize() {
+  const d = devicePixelRatio || 1;
+  const b = cv.getBoundingClientRect();
+  cv.width = b.width * d;
+  cv.height = b.height * d;
+  const s = Math.min(cv.width / (W + 16), cv.height / (H + 16));
+  fit = { s, ox: (cv.width - W * s) / 2, oy: (cv.height - H * s) / 2 };
+}
+
+function seq(a, sp) {
+  const tot = a.reduce((x, i) => x + i.len, 0);
+  let c = 0;
+  return a.map(i => {
+    const u = cl((sp * tot - c) / i.len);
+    c += i.len;
+    return u;
+  });
+}
+
+function line(it, u, w, col, al) {
+  if (u <= 0) return;
+  ctx.save();
+  ctx.globalAlpha = al;
+  ctx.strokeStyle = col;
+  ctx.lineWidth = w;
+  ctx.lineCap = ctx.lineJoin = 'round';
+  ctx.setLineDash(u >= 1 ? [] : [it.len, it.len + 2]);
+  ctx.lineDashOffset = it.len * (1 - u);
+  ctx.stroke(it.p);
+  ctx.restore();
+}
+
+function wipe(it, u, col) {
+  if (u <= 0) return;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, W * u, H);
+  ctx.clip();
+  ctx.fillStyle = col;
+  ctx.fill(it.p);
+  ctx.restore();
+}
+
+function renderAtmosphere(type, now, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  if (type === 'snow') {
+    ctx.fillStyle = 'rgba(255,255,255,.9)';
+    for (let i = 0; i < 40; i++) {
+      const x = (i * 47.3 + Math.sin(now / 1000 * 0.8 + i) * 6) % W;
+      const y = (now / 1000 * (8 + i % 5 * 3) + i * 29) % H;
+      ctx.beginPath();
+      ctx.arc(x, y, 0.7 + i % 3 * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (type === 'stars') {
+    for (let i = 0; i < 28; i++) {
+      const x = (i * 53.7) % W;
+      const y = (i * 31.3) % (H * 0.75);
+      const twinkle = 0.4 + 0.6 * Math.sin(now / 400 + i * 1.7);
+      ctx.fillStyle = `rgba(254, 249, 195, ${twinkle})`;
+      ctx.beginPath();
+      ctx.arc(x, y, 0.6 + (i % 2) * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (type === 'petals') {
+    const cols = ['rgba(251,113,133,.75)', 'rgba(253,224,71,.8)', 'rgba(244,114,182,.75)'];
+    for (let i = 0; i < 22; i++) {
+      const x = (i * 43.1 + Math.sin(now / 1200 + i) * 10 + W) % W;
+      const y = (now / 1000 * (6 + i % 4 * 2) + i * 37) % H;
+      ctx.fillStyle = cols[i % cols.length];
+      ctx.beginPath();
+      ctx.ellipse(x, y, 1.3, 0.7, now / 800 + i, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+function frame(now) {
   requestAnimationFrame(frame);
-  const td=(now-tDraw)/1000;
-  const sp0=cl(td/D_DRAW[0]),sp1=cl((td-D_DRAW[0])/D_DRAW[1]);
+  const page = PAGES[pageIdx];
+  const td = (now - tDraw) / 1000;
+  const sp0 = cl(td / D_DRAW[0]);
+  const sp1 = cl((td - D_DRAW[0]) / D_DRAW[1]);
 
-  if(mode==='drawing'&&sp1>=1)setMode('choosing');
-
-  let sp2=0,sp3=0;
-  if(mode==='auto'){
-    const ta=(now-tAuto)/1000;
-    sp2=cl(ta/D_AUTO[0]);
-    sp3=cl((ta-D_AUTO[0])/D_AUTO[1]);
+  if (mode === 'drawing' && sp1 >= 1) {
+    setMode('choosing');
   }
 
-  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);
-  const{s,ox,oy}=fit;ctx.setTransform(s,0,0,s,ox,oy);
-
-  // Hoja
-  ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=28;ctx.fillStyle='#f7f1e3';ctx.fillRect(0,0,W,H);ctx.restore();
-  ctx.save();ctx.beginPath();ctx.rect(0,0,W,H);ctx.clip();
-
-  if(mode==='auto'){
-    // Color automático
-    if(sp2>0){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0f2a5c');g.addColorStop(1,'#4a7fc1');ctx.globalAlpha=cl(sp2*5);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1}
-    seq(FILL,sp2).forEach((u,i)=>wipe(FILL[i],u,FILL[i].c));
-  }else{
-    // Pintura manual de Vany
-    ctx.drawImage(paint,0,0,W,H);
+  let sp2 = 0, sp3 = 0;
+  if (mode === 'auto') {
+    const ta = (now - tAuto) / 1000;
+    sp2 = cl(ta / D_AUTO[0]);
+    sp3 = cl((ta - D_AUTO[0]) / D_AUTO[1]);
   }
 
-  // Boceto (se borra al entintar)
-  const ska=sp1>0?Math.max(0,.75-sp1*1.2):.75;
-  if(ska>0){
-    const us=seq(SK,sp0);
-    [[.5,-.4],[-.4,.5]].forEach(([dx,dy],k)=>{ctx.save();ctx.translate(dx,dy);SK.forEach((it,i)=>line(it,cl(us[i]*(k?.95:1)),.55,'#64748b',ska));ctx.restore()});
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  const { s, ox, oy } = fit;
+  ctx.setTransform(s, 0, 0, s, ox, oy);
+
+  // Hoja de papel crema
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,.6)';
+  ctx.shadowBlur = 28;
+  ctx.fillStyle = '#f7f1e3';
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, W, H);
+  ctx.clip();
+
+  if (mode === 'auto') {
+    // Cielo y relleno automático
+    if (sp2 > 0) {
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, page.sky[0]);
+      g.addColorStop(1, page.sky[1]);
+      ctx.globalAlpha = cl(sp2 * 5);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = 1;
+    }
+    seq(page.fill, sp2).forEach((u, i) => wipe(page.fill[i], u, page.fill[i].c));
+  } else {
+    // Pintura manual guardada en esta página
+    ctx.drawImage(paint, 0, 0, W, H);
   }
 
-  // Tinta
-  const ui=seq(INK,sp1);
-  INK.forEach((it,i)=>line(it,ui[i],it.w,it.c,1));
+  // Boceto a lápiz (se desvanece al entintar)
+  const ska = sp1 > 0 ? Math.max(0, 0.75 - sp1 * 1.2) : 0.75;
+  if (ska > 0) {
+    const us = seq(page.sk, sp0);
+    [[0.5, -0.4], [-0.4, 0.5]].forEach(([dx, dy], k) => {
+      ctx.save();
+      ctx.translate(dx, dy);
+      page.sk.forEach((it, i) => line(it, cl(us[i] * (k ? 0.95 : 1)), 0.55, '#64748b', ska));
+      ctx.restore();
+    });
+  }
 
-  // Luces, sombras y nieve en modo automático
-  if(mode==='auto'){
-    seq(SH,sp3).forEach((u,i)=>wipe(SH[i],u,SH[i].c));
-    if(sp3>0){
-      const v=ctx.createRadialGradient(W/2,H/2,H*.4,W/2,H/2,H*.95);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.4)');ctx.globalAlpha=sp3;ctx.fillStyle=v;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;
-      ctx.fillStyle='rgba(255,255,255,.9)';for(let i=0;i<40;i++){const x=(i*47.3+Math.sin(now/1000*.8+i)*6)%W,y=(now/1000*(8+i%5*3)+i*29)%H;ctx.beginPath();ctx.arc(x,y,.7+i%3*.3,0,7);ctx.fill()}
+  // Entintado
+  const ui = seq(page.ink, sp1);
+  page.ink.forEach((it, i) => line(it, ui[i], it.w, it.c, 1));
+
+  // Luces, sombras y atmósfera en modo automático
+  if (mode === 'auto') {
+    seq(page.sh, sp3).forEach((u, i) => wipe(page.sh[i], u, page.sh[i].c));
+    if (sp3 > 0) {
+      const v = ctx.createRadialGradient(W / 2, H / 2, H * 0.4, W / 2, H / 2, H * 0.95);
+      v.addColorStop(0, 'rgba(0,0,0,0)');
+      v.addColorStop(1, 'rgba(0,0,0,.38)');
+      ctx.globalAlpha = sp3;
+      ctx.fillStyle = v;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = 1;
+      renderAtmosphere(page.particles, now, sp3);
     }
   }
 
   ctx.restore();
 
   // Herramientas animadas y textos de estado
-  const cap=document.getElementById('cap'),bi=document.getElementById('bi');
-  if(mode==='drawing'){
-    const st=sp0<1?0:1,arr=st?INK:SK,u=seq(arr,st?sp1:sp0),i=u.findIndex(v=>v<1);
-    const it=arr[Math.max(0,i)],pt=it.e.getPointAtLength(it.len*(i<0?1:u[i]));
-    ctx.setTransform(1,0,0,1,0,0);ctx.font=`${Math.max(22,s*12)}px serif`;ctx.textBaseline='bottom';
-    ctx.fillText(st?'🖋️':'✏️',ox+pt.x*s-2,oy+pt.y*s+3);
-    cap.textContent=st?'2 · Entintado':'1 · Boceto a lápiz';
-    bi.style.width=Math.min(100,td/(D_DRAW[0]+D_DRAW[1])*100)+'%';
-  }else if(mode==='choosing'){
-    cap.textContent='✨ ¡Listo! ¿Cómo quieres colorearlo?';
-    bi.style.width='100%';
-  }else if(mode==='user'){
-    cap.textContent='🎨 ¡Tu turno de colorear!';
-    bi.style.width='100%';
-  }else if(mode==='auto'){
-    if(sp3<1){
-      const p=sp2<1?sp2:sp3,x=p*W,y=H*.55+Math.sin(now/1000*6)*8;
-      ctx.setTransform(1,0,0,1,0,0);ctx.font=`${Math.max(22,s*12)}px serif`;ctx.textBaseline='bottom';
-      ctx.fillText('🖌️',ox+x*s-2,oy+y*s+3);
-      cap.textContent=sp2<1?'3 · Color':'4 · Luces y sombras';
-      bi.style.width=Math.min(100,((now-tAuto)/1000)/(D_AUTO[0]+D_AUTO[1])*100)+'%';
-    }else{
-      cap.textContent='✨ Terminado';
-      bi.style.width='100%';
-      if(!autoFin){autoFin=true;document.getElementById('autoControls').style.display='flex';resize();celebrar()}
+  const cap = document.getElementById('cap');
+  const bi = document.getElementById('bi');
+
+  if (mode === 'drawing') {
+    const st = sp0 < 1 ? 0 : 1;
+    const arr = st ? page.ink : page.sk;
+    const u = seq(arr, st ? sp1 : sp0);
+    const i = u.findIndex(v => v < 1);
+    const it = arr[Math.max(0, i)];
+    const pt = it.e.getPointAtLength(it.len * (i < 0 ? 1 : u[i]));
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.font = `${Math.max(22, s * 12)}px serif`;
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(st ? '🖋️' : '✏️', ox + pt.x * s - 2, oy + pt.y * s + 3);
+    cap.textContent = st ? '2 · Entintado' : '1 · Boceto a lápiz';
+    bi.style.width = Math.min(100, td / (D_DRAW[0] + D_DRAW[1]) * 100) + '%';
+  } else if (mode === 'choosing') {
+    cap.textContent = '✨ ¡Listo! ¿Cómo quieres colorearlo?';
+    bi.style.width = '100%';
+  } else if (mode === 'user') {
+    cap.textContent = '🎨 ¡Tu turno de colorear!';
+    bi.style.width = '100%';
+  } else if (mode === 'auto') {
+    if (sp3 < 1) {
+      const p = sp2 < 1 ? sp2 : sp3;
+      const x = p * W;
+      const y = H * 0.55 + Math.sin(now / 1000 * 6) * 8;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.font = `${Math.max(22, s * 12)}px serif`;
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('🖌️', ox + x * s - 2, oy + y * s + 3);
+      cap.textContent = sp2 < 1 ? '3 · Color mágico' : '4 · Luces y sombras';
+      bi.style.width = Math.min(100, ((now - tAuto) / 1000) / (D_AUTO[0] + D_AUTO[1]) * 100) + '%';
+    } else {
+      cap.textContent = '✨ Terminado';
+      bi.style.width = '100%';
+      if (!autoFin) {
+        autoFin = true;
+        document.getElementById('animControls').style.display = 'none';
+        document.getElementById('autoControls').style.display = 'flex';
+        resize();
+        celebrar();
+      }
     }
   }
 }
 
-function celebrar(){
-  for(let k=0;k<14;k++)setTimeout(()=>{
-    const e=document.createElement('span');e.className='h';
-    e.textContent=['💖','✨','🐾','🎨'][k%4];
-    e.style.left=Math.random()*95+'vw';e.style.animationDuration=(3+Math.random()*2)+'s';
-    document.body.appendChild(e);setTimeout(()=>e.remove(),5500);
-  },k*160);
+function celebrar() {
+  for (let k = 0; k < 14; k++) {
+    setTimeout(() => {
+      const e = document.createElement('span');
+      e.className = 'h';
+      e.textContent = ['💖', '✨', '🐾', '🎨'][k % 4];
+      e.style.left = Math.random() * 95 + 'vw';
+      e.style.animationDuration = (3 + Math.random() * 2) + 's';
+      document.body.appendChild(e);
+      setTimeout(() => e.remove(), 5500);
+    }, k * 160);
+  }
 }
 
-addEventListener('resize',resize);resize();requestAnimationFrame(frame);
+addEventListener('resize', resize);
+loadPage(0);
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>
