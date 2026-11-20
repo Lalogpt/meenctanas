@@ -318,6 +318,17 @@
     to { transform: translateY(-105vh) rotate(20deg); opacity: 0; }
   }
 
+  button:focus-visible { outline: 2px solid #fcd34d; outline-offset: 2px; }
+  @media (hover: hover) { button.btn:hover, .nav-btn:hover, .big-btn:hover { filter: brightness(1.12); } }
+  @media (min-width: 1100px) { #wrap { max-width: 960px; } }
+  @media (pointer: coarse) {
+    html, body { touch-action: manipulation; -webkit-touch-callout: none; }
+    .nav-btn, .br-btn, button.btn { min-height: 40px; }
+    .big-btn { min-height: 48px; }
+    .sw { width: 28px; height: 28px; }
+    #pal { gap: 7px; }
+  }
+  @media (max-height: 520px) and (orientation: landscape) { .big-btn { min-height: 38px; padding-top: 6px; padding-bottom: 6px; } }
   @media (max-width: 520px) {
     .nav-btn { font-size: 0.7rem; padding: 4px 9px; }
     .br-btn { font-size: 0.68rem; padding: 3px 7px; }
@@ -492,7 +503,7 @@ document.getElementById('soundToggle').onclick = () => {
 };
 
 // ============================================================================
-// DEFINICIÓN DE LAS 7 PÁGINAS ILUSTRADAS DEL LIBRO
+// DEFINICIÓN DE LAS 10 PÁGINAS ILUSTRADAS DEL LIBRO
 // ============================================================================
 
 // --- PÁGINA 1: Snoopy Navideño ---
@@ -958,7 +969,94 @@ const P7 = (() => {
   };
 })();
 
-const PAGES = [P1, P2, P3, P4, P5, P6, P7];
+// --- PÁGINAS 8-10: más dibujos (Snoopy reutilizado) ---
+const SN = (() => {
+  const HEAD = 'M76 64 C84 60 94 64 94 72 C94 80 86 82 78 81 C70 82 58 80 56 74 C54 68 62 65 69 66 C72 65 74 64 76 64Z',
+        EAR = 'M84 69 C93 68 97 79 93 89 C90 92 84 89 83 82 C82 76 82 71 84 69Z',
+        NOSE = circ(56.5, 72, 4.2),
+        BODY = 'M72 86 C66 94 66 108 72 114 H88 C94 108 94 94 88 86 Z',
+        SHIRT = 'M69 86 H91 V99 H69 Z';
+  return {
+    sk: ['M70 86 H90 V114 H70 Z', circ(80, 72, 11)],
+    ink: [[BODY, 1.7, K], [SHIRT, 1.3, K], [HEAD, 1.8, K], [EAR, 1.6, K], [NOSE, 1.2, K], ['M61 76 Q68 80 75 76', 1.1, K]],
+    fill: c => [[BODY, '#ffffff'], [SHIRT, c], [HEAD, '#ffffff'], [EAR, K], [NOSE, K]]
+  };
+})();
+const xf = (d, s, tx, ty) => d.replace(/([A-Za-z])([^A-Za-z]*)/g, (_, c, a) => {
+  if (c === 'Z' || c === 'z') return c;
+  const n = (a.match(/-?\d*\.?\d+/g) || []).map(Number), f = v => +v.toFixed(2);
+  let o;
+  if (c === 'H') o = n.map(v => f(v * s + tx));
+  else if (c === 'V') o = n.map(v => f(v * s + ty));
+  else if (c === 'a') o = n.map((v, i) => [2, 3, 4].includes(i % 7) ? v : f(v * s));
+  else o = n.map((v, i) => f(v * s + (i % 2 ? ty : tx)));
+  return c + o.join(' ');
+});
+const build = (title, sky, particles, sk, ink, fill, sh, shirt, k = { s: 1, tx: 0, ty: 0 }, top = [[], []]) => {
+  const m = d => (k.s === 1 && !k.tx && !k.ty) ? d : xf(d, k.s, k.tx, k.ty);
+  return {
+    title, sky, particles,
+    sk: [...sk, ...SN.sk.map(m)].map(P),
+    ink: [...ink, ...SN.ink.map(([d, w, c]) => [m(d), w * Math.max(.7, k.s + .2), c]), ...top[1]].map(([d, w, c]) => ({ ...P(d), w, c })),
+    fill: [...fill, ...SN.fill(shirt).map(([d, c]) => [m(d), c]), ...top[0]].map(([d, c]) => ({ ...P(d), c, len: 1 })),
+    sh: sh.map(([d, c]) => ({ ...P(d), c, len: 1 }))
+  };
+};
+
+
+// --- PÁGINA 8: Snoopy Campista ---
+const P8 = (() => {
+  const GND = 'M0 112 Q100 104 200 114 V150 H0 Z', MOON = circ(32, 26, 12),
+        TENT = 'M120 114 L152 62 L184 114 Z', DOOR = 'M152 62 L140 114 H164 Z',
+        FLAME = 'M110 112 C102 104 108 98 108 90 C115 98 119 105 110 112Z', LOGS = 'M100 114 H122 V119 H100 Z',
+        TRUNK = 'M16 114 V84 H22 V114 Z', LEAVES = 'M5 90 L19 52 L33 90 Z',
+        S1 = star(64, 20, 5), S2 = star(98, 38, 4), S3 = star(160, 26, 6);
+  return build('Snoopy Campista', ['#0f172a', '#1e3a8a'], 'stars',
+    ['M0 112 Q100 104 200 114', MOON, 'M120 114 L152 62 L184 114', circ(19, 70, 14)],
+    [['M0 112 Q100 104 200 114', 1.4, '#14532d'], [MOON, 1.3, '#ca8a04'], [TENT, 1.9, K], [DOOR, 1.5, K],
+     [FLAME, 1.3, '#b45309'], [LOGS, 1.4, K], [TRUNK, 1.5, K], [LEAVES, 1.6, K],
+     [S1, 1, '#ca8a04'], [S2, 1, '#ca8a04'], [S3, 1, '#ca8a04']],
+    [[GND, '#166534'], [MOON, '#fef08a'], [TENT, '#f97316'], [DOOR, '#7c2d12'], [FLAME, '#facc15'], [LOGS, '#78350f'],
+     [TRUNK, '#92400e'], [LEAVES, '#15803d'], [S1, '#fde047'], [S2, '#fde047'], [S3, '#fde047']],
+    [['M0 126 Q100 118 200 128 V150 H0 Z', 'rgba(0,0,0,.25)']], '#22c55e');
+})();
+
+// --- PÁGINA 9: Snoopy en Globo Aerostático (Snoopy dentro de la canasta) ---
+const P9 = (() => {
+  const HILL = 'M0 126 Q50 104 100 122 T200 120 V150 H0 Z', BAL = circ(140, 40, 28),
+        STRIPE = 'M140 14 C124 26 124 56 140 68 C156 56 156 26 140 14Z', BASKET = 'M128 98 H152 V112 H128 Z',
+        FRONT = 'M128 100 H152 V112 H128 Z', ROPES = 'M115 52 L129 98 M165 52 L151 98',
+        CL1 = 'M14 38 H58 C66 38 66 26 54 26 C52 16 36 16 34 26 C22 24 8 30 14 38Z',
+        CL2 = 'M20 92 H60 C68 92 68 82 56 82 C54 74 40 74 38 82 C26 80 14 86 20 92Z',
+        BIRD = circ(182, 70, 4.4), BEAK = 'M186 69.5 L191 71 L186 72.5Z';
+  return build('Snoopy en Globo', ['#38bdf8', '#e0f2fe'], 'petals',
+    [HILL, BAL, CL1, CL2, BASKET],
+    [[HILL, 1.4, '#166534'], [BAL, 1.9, K], [STRIPE, 1.4, '#be123c'], [BASKET, 1.6, K], [ROPES, 1.2, K],
+     [CL1, 1.1, '#0284c7'], [CL2, 1.1, '#0284c7'], [BIRD, 1.1, K], [BEAK, .9, K]],
+    [[HILL, '#4ade80'], [CL1, '#ffffff'], [CL2, '#ffffff'], [BAL, '#fb7185'], [STRIPE, '#fde047'],
+     [BASKET, '#b45309'], [BIRD, '#facc15'], [BEAK, '#f97316']],
+    [['M0 134 Q60 120 120 134 T200 132 V150 H0 Z', 'rgba(21,128,61,.28)']], '#38bdf8',
+    { s: .55, tx: 97.93, ty: 41.3 },
+    [[[FRONT, '#b45309']], [[FRONT, 1.6, K], ['M128 104 H152 M128 108 H152', .8, '#78350f']]]);
+})();
+
+// --- PÁGINA 10: Snoopy Escritor ---
+const P10 = (() => {
+  const FLOOR = 'M0 114 H200 V150 H0 Z', WIN = 'M150 26 H186 V68 H150 Z', MOON = circ(172, 40, 8),
+        TYPE = 'M102 100 H148 V114 H102 Z', PAPER = 'M112 74 H138 V100 H112 Z',
+        LINES = 'M116 81 H134 M116 86 H134 M116 91 H128', STACK = 'M16 104 H46 V114 H16 Z',
+        HEART = heart(160, 84, .7);
+  return build('Snoopy Escritor', ['#fef3c7', '#fde68a'], 'hearts',
+    ['M0 114 H200', WIN, PAPER, TYPE],
+    [['M0 114 H200', 1.4, '#92400e'], [WIN, 1.6, K], ['M168 26 V68 M150 47 H186', 1.1, K], [MOON, 1.1, '#ca8a04'],
+     [PAPER, 1.4, K], [LINES, 1, '#6b7280'], [TYPE, 1.7, K], ['M108 106 H142', 1, '#9ca3af'],
+     [STACK, 1.4, K], [HEART, 1.1, '#e11d48']],
+    [[FLOOR, '#c08457'], [WIN, '#1e3a8a'], [MOON, '#fef08a'], [PAPER, '#ffffff'], [TYPE, '#374151'],
+     [STACK, '#fbbf24'], [HEART, '#fb7185']],
+    [['M0 126 H200 V150 H0 Z', 'rgba(120,53,15,.22)'], ['M96 114 H152 V117 H96 Z', 'rgba(0,0,0,.25)']], '#a855f7');
+})();
+
+const PAGES = [P1, P2, P3, P4, P5, P6, P7, P8, P9, P10];
 
 // ============================================================================
 // ESTADO GLOBAL DEL LIBRO (0 = PORTADA, 1..7 = PÁGINAS)
@@ -1905,11 +2003,33 @@ function exportCurrentPage() {
     octx.restore();
   }
 
-  const a = document.createElement('a');
-  a.download = `snoopy-pag${currentView}-vany.png`;
-  a.href = out.toDataURL('image/png');
-  a.click();
+  out.toBlob(async b => {
+    const name = `snoopy-pag${currentView}-vany.png`;
+    if (matchMedia('(pointer: coarse)').matches && navigator.canShare) {
+      const f = new File([b], name, { type: 'image/png' });
+      if (navigator.canShare({ files: [f] })) {
+        try { await navigator.share({ files: [f], title: 'Snoopy para Vany' }); return; }
+        catch (e) { if (e.name === 'AbortError') return; }
+      }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(b); a.download = name; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }, 'image/png');
 }
+
+// Atajos de teclado (laptop) y vibración ligera (teléfono)
+addEventListener('keydown', e => {
+  const $b = id => document.getElementById(id);
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+    const u = $b('undo'); if (u && u.offsetParent) { u.click(); e.preventDefault(); } return;
+  }
+  const id = { ArrowRight: 'nextPage', ArrowLeft: 'prevPage', Home: 'goCover' }[e.key];
+  const b = id && $b(id); if (b && !b.disabled) b.click();
+});
+[['nextPage', 'Página siguiente (→)'], ['prevPage', 'Página anterior (←)'], ['goCover', 'Portada (Inicio)'], ['undo', 'Deshacer (Ctrl+Z)']]
+  .forEach(([id, t]) => { const b = document.getElementById(id); if (b) b.title = t; });
+document.addEventListener('click', e => { if (e.target.closest('button') && navigator.vibrate) navigator.vibrate(8); });
 
 document.getElementById('save').onclick = exportCurrentPage;
 document.getElementById('saveAuto').onclick = exportCurrentPage;
